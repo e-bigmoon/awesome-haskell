@@ -37,10 +37,11 @@ instance ToMarkdown Package where
     where
       row = [ name pkg
             , version pkg
-            , descriptionPageLink pkg
+            , genLink (name pkg) (descriptionPageLink pkg)
             , mconcat $ intersperse ", " $ tags pkg
             , "\n"
             ]
+      genLink title link = mconcat ["[",title,"](",link,")"]
 
 --------------------------------------------------------------------------------
 main :: IO ()
