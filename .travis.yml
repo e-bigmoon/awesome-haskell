@@ -12,8 +12,6 @@ before_install:
   --strip-components=1 -C ~/.local/bin '*/stack'
 install:
 - stack --no-terminal --install-ghc test --only-dependencies
-script:
-- stack --no-terminal test --haddock --no-haddock-deps
 notifications:
   slack:
     on_success: never
