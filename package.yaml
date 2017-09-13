@@ -1,0 +1,20 @@
+name: awesome-haskell
+version: 1.0.0
+synopsis: Haskell recommendation packages by BIG MOON
+maintainer: Shinya Yamaguchi
+author: Shinya Yamaguchi
+copyright: 2017 BIG MOON
+github: e-bigmoon/awesome-haskell
+
+ghc-options:
+  - -Wall
+  - -Wno-type-defaults
+
+dependencies:
+  - base >= 4.7 && < 5
+
+executables:
+  site:
+    main: site.hs
+    dependencies:
+      - hakyll
