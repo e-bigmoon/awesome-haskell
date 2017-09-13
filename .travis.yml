@@ -23,5 +23,5 @@ jobs:
   include:
     - stage: stack test
       script: stack --no-terminal test --haddock --no-haddock-deps
-      stage: site build test
+    - stage: site build test
       script: stack exec site rebuild
