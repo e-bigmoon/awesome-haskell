@@ -1,11 +1,173 @@
 packages:
   - name: yesod
-    version: 1.0.0
-    descriptionPageLink: /packages/yesod.md
+    version: 1.4.37
     tags:
-      - web
+      - Web Application Framework (dynamic site)
   - name: hakyll
     version: 1.0.0
-    descriptionPageLink: /packages/hakyll.md
     tags:
-      - staticSiteGenerator
+      - Static Site Generator
+  - name: shakespeare
+    version: 2.0.14
+    tags:
+      - Template Engine
+      - HTML
+      - CSS
+      - JavaScript
+  - name: Clay
+    version: 0.12.2
+    tags:
+      - Template Engine
+      - CSS
+  - name: req
+    version: 0.4.0
+    tags:
+      - Network
+  - name: optparse-applicative
+    version: 0.14.0
+    tags:
+      - Parser
+      - Command Line Parser
+  - name: extensible
+    version: 0.4.4
+    tags:
+      - Record
+  - name: lens
+    version: 4.15.4
+    tags:
+      - Record
+  - name: convertible
+    version: 1.1.1.0
+    tags:
+      - Convert
+      - String Conversion
+  - name: convert
+    version: 1.0.2
+    tags:
+      - Convert
+      - String Conversion
+  - name: haste
+    version: "0.6"
+    tags:
+      - Haskell to JS Transpiler
+      - Javascript
+  - name: elm
+    version: "0.16"
+    tags:
+      - DSL
+      - UI
+  - name: aeson
+    version: 1.2.1.0
+    tags:
+      - Data Structure
+      - JSON Parser
+  - name: yaml
+    version: 0.8.23.3
+    tags:
+      - Data Structure
+      - Yaml Parser
+  - name: cassava
+    version: 0.5.1.0
+    tags:
+      - Data Structure
+      - CSV Parser
+  - name: hxt
+    version: 9.3.1.16
+    tags:
+      - Data Structure
+      - XML Parser
+  - name: turtle
+    version: 1.4.3
+    tags:
+      - Shell
+  - name: shelly
+    version: 1.6.8.4
+    tags:
+      - Shell
+  - name: persistent
+    version: 2.7.0
+    tags:
+      - Database
+  - name: esqueleto
+    version: 2.5.3
+    tags:
+      - Database
+  - name: conduit
+    version: 1.2.12
+    tags:
+      - Streaming
+  - name: hspec
+    version: 2.4.4
+    tags:
+      - Test
+  - name: QquickCheck
+    version: 2.10.0.1
+    tags:
+      - Test
+  - name: doctest
+    version: 0.13.0
+    tags:
+      - Test
+  - name: test-framework
+    version: 0.8.1.1
+    tags:
+      - Test
+  - name: stack
+    version: 1.5.1
+    tags:
+      - Project Management
+  - name: cabal
+    version: 1.5.1
+    tags:
+      - Projet Management
+  - name: hpack
+    version: 0.18.1
+    tags:
+      - Projet Management
+  - name: megaparsec
+    version: 6.1.1
+    tags:
+      - Parser Combinator
+  - name: attoparsec
+    version: 0.13.2.0
+    tags:
+      - Parser Combinator
+  - name: filepath
+    version: 1.4.1.2
+    tags:
+      - System
+  - name: blaze-html
+    version: 0.9.0.1
+    tags:
+      - HTML Combinator
+  - name: blaze-markup
+    version: 0.8.0.0
+    tags:
+      - Markup Combinator
+  - name: hakyll-shakespeare
+    version: 0.1.0.0.2
+    tags:
+      - Hakyll
+      - Hamlet Compiler
+  - name: cryptohash-sha256
+    version: 0.11.100.1
+    tags:
+      - Hash
+  - name: bytestring
+    version: 0.10.8.2
+    tags:
+      - Data Structure
+      - String
+  - name: containers
+    version: 0.5.10.2
+    tags:
+      - Data Structure
+  - name: time
+    version: 1.8.0.3
+    tags:
+      - Time
+  - name: text
+    version: 1.2.2.2
+    tags:
+      - Data Structure
+      - String
