@@ -1,42 +1,19 @@
-# This is the simple Travis configuration, which is intended for use
-# on applications which do not require cross-platform and
-# multiple-GHC-version support. For more information and other
-# options, see:
-#
-# https://docs.haskellstack.org/en/stable/travis_ci/
-#
-# Copy these contents into the root directory of your Github project in a file
-# named .travis.yml
-
-# Use new container infrastructure to enable caching
 sudo: false
-
-# Do not choose a language; we provide our own build tools.
 language: generic
-
-# Caching so the next build will be fast too.
 cache:
   directories:
-  - $HOME/.stack/
-  - $HOME/.local/bin/
-  - .stack-work/
-
-# Ensure necessary system libraries are present
-#addons:
-#  apt:
-#    packages:
-#      - libgmp-dev
-
+  - "$HOME/.stack/"
+  - "$HOME/.local/bin/"
+  - ".stack-work/"
 before_install:
-# Download and unpack the stack executable
 - mkdir -p ~/.local/bin
 - export PATH=$HOME/.local/bin:$PATH
-- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-
+- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards
+  --strip-components=1 -C ~/.local/bin '*/stack'
 install:
-# Build dependencies
 - stack --no-terminal --install-ghc test --only-dependencies
-
 script:
-# Build the package, its tests, and its docs and run the tests
 - stack --no-terminal test --haddock --no-haddock-deps
+notifications:
+  slack:
+    secure: jY/u3UYQ47o7kiqF7qH4zEkqwS6BpXGmVhAJAx+HlMe7GqQAMDvFXVUjj2E7ESK/dRuAU85PXrHFwZWSl7JEfLyymWyV70ZfbBXcoga0+S+IT1UsVJQSxkG3fSV7aQi5MVClOFryN6Q6XfHgScZn0/HqZRJ7rmx5g6fRHmCjdL5pe4RBxlDt0Y7Xy4FxR7WhsMdJf8MCXVRE+vFDpFnpLIIlqr+2W+QV1RwAV9JeF5HydrrljnrrqrfPGMikA2bvYkBQ8uAXYPRqjYeKODKdV599mXz01zSfu+Sok3/NFHImWDhRY8yIgzbkk//JJZpoD9Bp8qaZxBHG9CccKMyue4Aisq/fZE740eAPuhFtiFD0oTdpku2j4sas3wq+Occ/wJYpIAgs9c+JLi6lvUyt8X+VPBdG+8jZ+v57qoMwn7Xk0uuoR4YRJF5EvjWlAKF51h2t30pLwfIJ+2t8Utv3wPOyl5Y99p6fhqC+J3QBAGYwUbaRQdmrrhnupCvhbFc4xxiAm18T7Wf7hsKLNXq0fjnb3SoSNRzx7BTn2RCPLmpT/qA5NOqPXnFnU7W11G7irVHZ1Cfd67Ib5PIxAkKLjO+XVJl6Bqx+AOYJ2A3tohEi5Fg3UtAUbjyXhEdemXYiwPjX8x3e1W4ZBGpzFVtg98cfhS65U3d4fts3/LzubV4=
