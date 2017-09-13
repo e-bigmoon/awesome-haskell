@@ -16,11 +16,9 @@ data Packages = Packages
 data Package = Package
   { name :: Text
   , version :: Text
-  , descriptionPageLink :: URL
   , tags :: [Tag]
   } deriving (Generic)
 
-type URL = Text
 type Tag = Text
 
 instance FromJSON Packages
@@ -37,11 +35,11 @@ instance ToMarkdown Package where
     where
       row = [ name pkg
             , version pkg
-            , genLink (name pkg) (descriptionPageLink pkg)
+            , createPageDescLink $ name pkg
             , mconcat $ intersperse ", " $ tags pkg
             , "\n"
             ]
-      genLink title link = mconcat ["[",title,"](",link,")"]
+      createPageDescLink title = mconcat ["[",title,"](/packages/",title,"/Readme.md)"]
 
 --------------------------------------------------------------------------------
 main :: IO ()
