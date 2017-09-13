@@ -1,0 +1,11 @@
+packages:
+  - name: yesod
+    version: 1.0.0
+    descriptionPageLink: /packages/yesod.md
+    tags:
+      - web
+  - name: hakyll
+    version: 1.0.0
+    descriptionPageLink: /packages/hakyll.md
+    tags:
+      - staticSiteGenerator

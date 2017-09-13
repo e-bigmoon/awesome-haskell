@@ -18,3 +18,5 @@ executables:
     main: site.hs
     dependencies:
       - hakyll
+      - yaml
+      - text
