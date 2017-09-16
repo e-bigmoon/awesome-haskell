@@ -33,7 +33,7 @@ after_success:
 - eval "$(ssh-agent -s)"
 - chmod 600 deploy_key
 - ssh-add deploy_key
-- git remote add deploy DEPLOY_REPO_URI_GOES_HERE
+- git remote add deploy git@github.com:e-bigmoon/awesome-haskell.git
 - cp _site/Readme.md
 - git add --all
 - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
