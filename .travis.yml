@@ -33,7 +33,7 @@ after_success:
 - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - git config --global user.email "it@e-bigmoon.com"
 - git config --global user.name "DeployMoon"
-- ls -al
-  #- git add --all
-  #- git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
-  #- git push origin master
+- cp _site/Readme.md .
+- git add --all
+- git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
+- git push origin master
