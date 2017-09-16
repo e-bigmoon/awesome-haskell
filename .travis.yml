@@ -26,3 +26,16 @@ jobs:
       script: stack --no-terminal test --haddock --no-haddock-deps
     - stage: site build test
       script: stack exec site rebuild
+
+after_success:
+- openssl aes-256-cbc -K $encrypted_283acfc78d2e_key -iv $encrypted_283acfc78d2e_key_iv -in travis_key.enc -out ~/.ssh/id_rsa -d
+- chmod 600 ~/.ssh/id_rsa
+- echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+- git config --global user.email "it@e-bigmoon.com"
+- git config --global user.name "DeployMoon"
+- git clone git@github.com:e-bigmoon/awesome-haskell.git
+- cd awesome-haskell
+- stack exec site deploy
+- git add --all
+- git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
+- git push origin master
