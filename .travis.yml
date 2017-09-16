@@ -28,7 +28,7 @@ jobs:
       script: stack exec site rebuild
 
 after_success:
-- openssl aes-256-cbc -K $encrypted_283acfc78d2e_key -iv $encrypted_283acfc78d2e_key_iv -in travis-ci.enc -out ~/.ssh/id_rsa -d
+- openssl aes-256-cbc -K $encrypted_283acfc78d2e_key -iv $encrypted_283acfc78d2e_iv -in travis-ci.enc -out ~/.ssh/id_rsa -d
 - chmod 600 ~/.ssh/id_rsa
 - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - git config --global user.email "it@e-bigmoon.com"
