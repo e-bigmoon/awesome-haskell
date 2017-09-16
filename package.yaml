@@ -18,5 +18,15 @@ executables:
     main: site.hs
     dependencies:
       - hakyll
-      - yaml
-      - text
+      - awesome-haskell
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - Site.Type
+    - Site.Class
+    - Site.Util
+  dependencies:
+    - text
+    - yaml
+    - hakyll

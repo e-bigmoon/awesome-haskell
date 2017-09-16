@@ -17,12 +17,28 @@ source-repository head
   type: git
   location: https://github.com/e-bigmoon/awesome-haskell
 
+library
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wno-type-defaults
+  build-depends:
+      base >= 4.7 && < 5
+    , text
+    , yaml
+    , hakyll
+  exposed-modules:
+      Site.Type
+      Site.Class
+      Site.Util
+  other-modules:
+      Paths_awesome_haskell
+  default-language: Haskell2010
+
 executable site
   main-is: site.hs
   build-depends:
       base >= 4.7 && < 5
     , hakyll
-    , yaml
-    , text
+    , awesome-haskell
   ghc-options: -Wall -Wno-type-defaults
   default-language: Haskell2010
