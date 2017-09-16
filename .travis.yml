@@ -6,6 +6,8 @@ cache:
   - "$HOME/.local/bin/"
   - ".stack-work/"
 before_install:
+- openssl aes-256-cbc -K $encrypted_283acfc78d2e_key -iv $encrypted_283acfc78d2e_iv
+  -in travis-ci.enc -out travis-ci -d
 - mkdir -p ~/.local/bin
 - export PATH=$HOME/.local/bin:$PATH
 - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards
@@ -15,25 +17,34 @@ install:
 notifications:
   slack:
     rooms:
-      - secure: jY/u3UYQ47o7kiqF7qH4zEkqwS6BpXGmVhAJAx+HlMe7GqQAMDvFXVUjj2E7ESK/dRuAU85PXrHFwZWSl7JEfLyymWyV70ZfbBXcoga0+S+IT1UsVJQSxkG3fSV7aQi5MVClOFryN6Q6XfHgScZn0/HqZRJ7rmx5g6fRHmCjdL5pe4RBxlDt0Y7Xy4FxR7WhsMdJf8MCXVRE+vFDpFnpLIIlqr+2W+QV1RwAV9JeF5HydrrljnrrqrfPGMikA2bvYkBQ8uAXYPRqjYeKODKdV599mXz01zSfu+Sok3/NFHImWDhRY8yIgzbkk//JJZpoD9Bp8qaZxBHG9CccKMyue4Aisq/fZE740eAPuhFtiFD0oTdpku2j4sas3wq+Occ/wJYpIAgs9c+JLi6lvUyt8X+VPBdG+8jZ+v57qoMwn7Xk0uuoR4YRJF5EvjWlAKF51h2t30pLwfIJ+2t8Utv3wPOyl5Y99p6fhqC+J3QBAGYwUbaRQdmrrhnupCvhbFc4xxiAm18T7Wf7hsKLNXq0fjnb3SoSNRzx7BTn2RCPLmpT/qA5NOqPXnFnU7W11G7irVHZ1Cfd67Ib5PIxAkKLjO+XVJl6Bqx+AOYJ2A3tohEi5Fg3UtAUbjyXhEdemXYiwPjX8x3e1W4ZBGpzFVtg98cfhS65U3d4fts3/LzubV4=
+    - secure: jY/u3UYQ47o7kiqF7qH4zEkqwS6BpXGmVhAJAx+HlMe7GqQAMDvFXVUjj2E7ESK/dRuAU85PXrHFwZWSl7JEfLyymWyV70ZfbBXcoga0+S+IT1UsVJQSxkG3fSV7aQi5MVClOFryN6Q6XfHgScZn0/HqZRJ7rmx5g6fRHmCjdL5pe4RBxlDt0Y7Xy4FxR7WhsMdJf8MCXVRE+vFDpFnpLIIlqr+2W+QV1RwAV9JeF5HydrrljnrrqrfPGMikA2bvYkBQ8uAXYPRqjYeKODKdV599mXz01zSfu+Sok3/NFHImWDhRY8yIgzbkk//JJZpoD9Bp8qaZxBHG9CccKMyue4Aisq/fZE740eAPuhFtiFD0oTdpku2j4sas3wq+Occ/wJYpIAgs9c+JLi6lvUyt8X+VPBdG+8jZ+v57qoMwn7Xk0uuoR4YRJF5EvjWlAKF51h2t30pLwfIJ+2t8Utv3wPOyl5Y99p6fhqC+J3QBAGYwUbaRQdmrrhnupCvhbFc4xxiAm18T7Wf7hsKLNXq0fjnb3SoSNRzx7BTn2RCPLmpT/qA5NOqPXnFnU7W11G7irVHZ1Cfd67Ib5PIxAkKLjO+XVJl6Bqx+AOYJ2A3tohEi5Fg3UtAUbjyXhEdemXYiwPjX8x3e1W4ZBGpzFVtg98cfhS65U3d4fts3/LzubV4=
     on_success: never
     on_failure: always
     template:
-      - "【%{author}】さんのチェックインが失敗しました。すぐに直しましょう。詳細: <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} %{result} in %{duration}"
+    - "【%{author}】さんのチェックインが失敗しました。すぐに直しましょう。詳細: <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>)
+      of %{repository}@%{branch} %{result} in %{duration}"
 jobs:
   include:
-    - stage: stack test
-      script: stack --no-terminal test --haddock --no-haddock-deps
-    - stage: site build test
-      script: stack exec site rebuild
+  - stage: stack test
+    script: stack --no-terminal test --haddock --no-haddock-deps
+  - stage: site build test
+    script: stack exec site rebuild
+#after_success:
+#- chmod 600 ~/.ssh/id_rsa
+#- echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+#- git config --global user.email "it@e-bigmoon.com"
+#- git config --global user.name "DeployMoon"
+#- cp _site/Readme.md .
+#- git add --all
+#- git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
+#- git push origin master
 
 after_success:
-- openssl aes-256-cbc -K $encrypted_283acfc78d2e_key -iv $encrypted_283acfc78d2e_iv -in travis-ci.enc -out ~/.ssh/id_rsa -d
-- chmod 600 ~/.ssh/id_rsa
-- echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-- git config --global user.email "it@e-bigmoon.com"
-- git config --global user.name "DeployMoon"
-- cp _site/Readme.md .
-- git add --all
-- git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
-- git push origin master
+  - eval "$(ssh-agent -s)" #start the ssh agent
+  - chmod 600 .travis/deploy_key.pem # this key should have push access
+  - ssh-add .travis/deploy_key.pem
+  - git remote add deploy DEPLOY_REPO_URI_GOES_HERE
+  - cp _site/Readme.md
+  - git add --all
+  - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
+  - git push deploy
