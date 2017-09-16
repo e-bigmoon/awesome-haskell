@@ -35,6 +35,6 @@ after_success:
 - ssh-add deploy_key
 - git remote add deploy git@github.com:e-bigmoon/awesome-haskell.git
 - cp _site/Readme.md .
-- git add --all
+- git add Readme.md
 - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
-- git push deploy
+- git push deploy master
