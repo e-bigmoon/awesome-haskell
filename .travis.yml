@@ -7,7 +7,7 @@ cache:
   - ".stack-work/"
 before_install:
 - openssl aes-256-cbc -K $encrypted_283acfc78d2e_key -iv $encrypted_283acfc78d2e_iv
-  -in travis-ci.enc -out travis-ci -d
+  -in deploy_key.enc -out deploy_key -d
 - mkdir -p ~/.local/bin
 - export PATH=$HOME/.local/bin:$PATH
 - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards
@@ -29,22 +29,12 @@ jobs:
     script: stack --no-terminal test --haddock --no-haddock-deps
   - stage: site build test
     script: stack exec site rebuild
-#after_success:
-#- chmod 600 ~/.ssh/id_rsa
-#- echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-#- git config --global user.email "it@e-bigmoon.com"
-#- git config --global user.name "DeployMoon"
-#- cp _site/Readme.md .
-#- git add --all
-#- git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
-#- git push origin master
-
 after_success:
-  - eval "$(ssh-agent -s)" #start the ssh agent
-  - chmod 600 .travis/deploy_key.pem # this key should have push access
-  - ssh-add .travis/deploy_key.pem
-  - git remote add deploy DEPLOY_REPO_URI_GOES_HERE
-  - cp _site/Readme.md
-  - git add --all
-  - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
-  - git push deploy
+- eval "$(ssh-agent -s)"
+- chmod 600 deploy_key
+- ssh-add deploy_key
+- git remote add deploy DEPLOY_REPO_URI_GOES_HERE
+- cp _site/Readme.md
+- git add --all
+- git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
+- git push deploy
