@@ -37,4 +37,6 @@ after_success:
 - cp _site/Readme.md .
 - git add Readme.md
 - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
+- cat _site/Readme.md
+- git diff
 - git push deploy master
