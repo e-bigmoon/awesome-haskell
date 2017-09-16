@@ -119,11 +119,11 @@ packages:
   - name: cabal
     version: 1.5.1
     tags:
-      - Projet Management
+      - Project Management
   - name: hpack
     version: 0.18.1
     tags:
-      - Projet Management
+      - Project Management
   - name: megaparsec
     version: 6.1.1
     tags:
