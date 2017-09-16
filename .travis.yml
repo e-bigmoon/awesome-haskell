@@ -19,7 +19,7 @@ notifications:
     on_success: never
     on_failure: always
     template:
-      - "【%{author}】 さんのチェックインが失敗しました。すぐに直しましょう。詳細: <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} %{result} in %{duration}"
+      - "【%{author}】さんのチェックインが失敗しました。すぐに直しましょう。詳細: <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} %{result} in %{duration}"
 jobs:
   include:
     - stage: stack test
