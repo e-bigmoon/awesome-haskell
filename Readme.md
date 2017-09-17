@@ -1,4 +1,8 @@
-package name | version | description link | tags
+# Haskell Recommendation Libraries
+[![Build Status](https://travis-ci.org/e-bigmoon/awesome-haskell.svg?branch=master)](https://travis-ci.org/e-bigmoon/awesome-haskell)
+
+
+package name | version | Description | tags
 -------------|---------|------------------|-----
 yesod | 1.4.37 | [yesod](/packages/yesod/Readme.md) | Web Application Framework (dynamic site) | 
 hakyll | 1.0.0 | [hakyll](/packages/hakyll/Readme.md) | Static Site Generator | 
@@ -26,8 +30,8 @@ QquickCheck | 2.10.0.1 | [QquickCheck](/packages/QquickCheck/Readme.md) | Test |
 doctest | 0.13.0 | [doctest](/packages/doctest/Readme.md) | Test | 
 test-framework | 0.8.1.1 | [test-framework](/packages/test-framework/Readme.md) | Test | 
 stack | 1.5.1 | [stack](/packages/stack/Readme.md) | Project Management | 
-cabal | 1.5.1 | [cabal](/packages/cabal/Readme.md) | Projet Management | 
-hpack | 0.18.1 | [hpack](/packages/hpack/Readme.md) | Projet Management | 
+cabal | 1.5.1 | [cabal](/packages/cabal/Readme.md) | Project Management | 
+hpack | 0.18.1 | [hpack](/packages/hpack/Readme.md) | Project Management | 
 megaparsec | 6.1.1 | [megaparsec](/packages/megaparsec/Readme.md) | Parser Combinator | 
 attoparsec | 0.13.2.0 | [attoparsec](/packages/attoparsec/Readme.md) | Parser Combinator | 
 filepath | 1.4.1.2 | [filepath](/packages/filepath/Readme.md) | System | 
