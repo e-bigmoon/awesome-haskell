@@ -36,6 +36,6 @@ jobs:
     - git remote add deploy git@github.com:e-bigmoon/awesome-haskell.git
     - cp _site/Readme.md .
     - git add Readme.md
-    - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
     - git checkout master
+    - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
     - git push deploy master
