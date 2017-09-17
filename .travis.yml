@@ -37,5 +37,5 @@ jobs:
     - cp _site/Readme.md .
     - git add Readme.md
     - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
-    - cat _site/Readme.md
+    - git checkout master
     - git push deploy master
