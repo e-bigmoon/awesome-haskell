@@ -29,14 +29,13 @@ jobs:
     script: stack --no-terminal test --haddock --no-haddock-deps
   - stage: site build test
     script: stack exec site rebuild
-after_success:
-- eval "$(ssh-agent -s)"
-- chmod 600 deploy_key
-- ssh-add deploy_key
-- git remote add deploy git@github.com:e-bigmoon/awesome-haskell.git
-- cp _site/Readme.md .
-- git add Readme.md
-- git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
-- cat _site/Readme.md
-- git diff
-- git push deploy master
+    after_success:
+    - eval "$(ssh-agent -s)"
+    - chmod 600 deploy_key
+    - ssh-add deploy_key
+    - git remote add deploy git@github.com:e-bigmoon/awesome-haskell.git
+    - cp _site/Readme.md .
+    - git add Readme.md
+    - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
+    - cat _site/Readme.md
+    - git push deploy master
