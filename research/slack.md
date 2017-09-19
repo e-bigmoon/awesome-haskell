@@ -15,3 +15,13 @@ linklater | [4.0.0.2](https://hackage.haskell.org/package/linklater-4.0.0.2) | -
 
 - `slack-api`
 - `linklater`
+
+# slack-api
+実際に slack-api を使ってみた。
+
+- [stackage-diff](https://github.com/e-bigmoon/stackage-diff)
+
+機能的には特に不便を感じなかったが、ドキュメントが圧倒的に少ないためフロンティア精神が必要である。
+`chat_postMessage` の使い方など、戸惑う事が多いが、慣れてしまえば使いやすいライブラリのように思う。
+
+また、今回の利用用途は `slack` へメッセージを投げる事だったが、同様にボットを構築することもできるため、どちらのユースケースにも対応可能である。
