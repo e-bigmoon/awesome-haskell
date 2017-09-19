@@ -171,3 +171,7 @@ packages:
     tags:
       - Data Structure
       - String
+  - name: containers
+    version:0.5.10.2
+    tags:
+      - Data Structure
