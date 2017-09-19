@@ -171,3 +171,7 @@ packages:
     tags:
       - Data Structure
       - String
+  - name: slack-api
+    version: 0.12
+    tags:
+      - Web Service API
