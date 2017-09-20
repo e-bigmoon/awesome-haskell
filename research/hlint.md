@@ -33,10 +33,12 @@ $ git push
 
 2. コンパイル時間が勿体無いのでバイナリを使って検査を行う
 
+- この例では `.` を指定しているため、必要に応じて変更する
+
 ```yaml
 -- .travis.yml
 
 script:
-- curl -sL https://raw.github.com/ndmitchell/hlint/master/misc/travis.sh | sh
+- curl -sL https://raw.github.com/ndmitchell/hlint/master/misc/travis.sh | sh -s .
 - stack --no-terminal test --haddock --no-haddock-deps
 ```
