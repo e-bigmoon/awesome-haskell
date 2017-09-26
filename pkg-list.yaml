@@ -100,7 +100,7 @@ packages:
     version: 2.4.4
     tags:
       - Test
-  - name: QquickCheck
+  - name: QuickCheck
     version: 2.10.0.1
     tags:
       - Test
