@@ -26,7 +26,7 @@ persistent | 2.7.0 | [persistent](/packages/persistent/Readme.md) | Database |
 esqueleto | 2.5.3 | [esqueleto](/packages/esqueleto/Readme.md) | Database | 
 conduit | 1.2.12 | [conduit](/packages/conduit/Readme.md) | Streaming | 
 hspec | 2.4.4 | [hspec](/packages/hspec/Readme.md) | Test | 
-QquickCheck | 2.10.0.1 | [QquickCheck](/packages/QquickCheck/Readme.md) | Test | 
+QuickCheck | 2.10.0.1 | [QuickCheck](/packages/QuickCheck/Readme.md) | Test | 
 doctest | 0.13.0 | [doctest](/packages/doctest/Readme.md) | Test | 
 test-framework | 0.8.1.1 | [test-framework](/packages/test-framework/Readme.md) | Test | 
 stack | 1.5.1 | [stack](/packages/stack/Readme.md) | Project Management | 
