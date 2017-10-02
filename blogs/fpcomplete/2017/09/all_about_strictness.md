@@ -1,3 +1,5 @@
+# All About Strictness
+
 12 Sep 2017 Michael Snoyman
 
 Haskell is—perhaps infamously—a lazy language. The basic idea of laziness is pretty easy to sum up in one sentence: values are only computed when they're needed. But the implications of this are more subtle. In particular, it's important to understand some crucial topics if you want to write memory- and time-efficient code:
