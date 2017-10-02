@@ -2,14 +2,14 @@
 
 12 Sep 2017 Michael Snoyman
 
-Haskell is—perhaps infamously—a lazy language. The basic idea of laziness is pretty easy to sum up in one sentence: values are only computed when they're needed. But the implications of this are more subtle. In particular, it's important to understand some crucial topics if you want to write memory- and time-efficient code:
+Haskell は (もしかすると、評判のよろしくない？) 遅延言語です。遅延性の基本的なアイデアは「値が必要となったときにだけ計算される」という、たった一言で説明できるぐらい簡単なものです。しかし、この裏には色々なことが隠れています。特に、メモリと時間について効率的なコードを書こうとしたときに、必要不可欠なトピックがいくつもあります。
 
-- Weak head normal form (WHNF) versus normal form (NF)
-- How to use the `seq` and `deepseq` functions (and related concepts)
-- Strictness annotations on data types
-- Bang patterns
-- Strictness of data structures: lazy, spine-strict, and value-strict
-- Choosing the appropriate helper functions, especially with folds
+- 弱頭部標準形 (WHNF) と 標準形 (NF)
+- `seq` と `deepseq` 関数の使い方 (と関連する概念)
+- データ型の正格性アノテーション
+- バンパターン
+- データ構造の正格性: 遅延, spine-正格, 値-正格
+- 適切な補助関数の選択 (特に、folds)
 
 This blog post was inspired by some questions around writing efficient [conduit](https://haskell-lang.org/library/conduit) code, so I'll try to address some of that directly at the end. The concepts, though, are general, and will transfer to not only other streaming libraries, but non-streaming data libraries too.
 
