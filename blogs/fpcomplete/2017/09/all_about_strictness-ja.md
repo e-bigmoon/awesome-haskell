@@ -1,8 +1,8 @@
-# All About Strictness
+# 正格性のすべて
 
 12 Sep 2017 Michael Snoyman
 
-Haskell は (もしかすると、評判のよろしくない？) 遅延言語です。遅延性の基本的なアイデアは「値が必要となったときにだけ計算される」という、たった一言で説明できるぐらい簡単なものです。しかし、この裏には色々なことが隠れています。特に、メモリと時間について効率的なコードを書こうとしたときに、必要不可欠なトピックがいくつもあります。
+Haskell は (もしかすると、評判のよろしくない？) 遅延言語です。遅延性の基本的なアイデアは「値は必要となったときにのみ計算される」という、たった一言で説明できるぐらい簡単なものです。しかし、この裏には色々なことが隠れています。特に、メモリと時間について効率的なコードを書こうとしたときに、必要不可欠なトピックがいくつもあります。
 
 - 弱頭部標準形 (WHNF) と 標準形 (NF)
 - `seq` と `deepseq` 関数の使い方 (と関連する概念)
@@ -11,16 +11,17 @@ Haskell は (もしかすると、評判のよろしくない？) 遅延言語�
 - データ構造の正格性: 遅延, spine-正格, 値-正格
 - 適切な補助関数の選択 (特に、folds)
 
-This blog post was inspired by some questions around writing efficient [conduit](https://haskell-lang.org/library/conduit) code, so I'll try to address some of that directly at the end. The concepts, though, are general, and will transfer to not only other streaming libraries, but non-streaming data libraries too.
+この記事は効率的な [conduit](https://haskell-lang.org/library/conduit) コードを書くためのいくつかの質問にインスパイアされたものであり、記事の最後でそれらについて本気で取り組んでみようと思う。ここで紹介する概念は一般的なものであり、ストリーミングライブラリ一般に限定されるものではありません。
 
-**NOTE** This blog post will mostly treat laziness as a problem to be solved, as opposed to the reality: laziness is sometimes an asset, and sometimes a liability. I'm focusing on the negative exclusively, because our goal here is to understand the rough edges and how to avoid them. There are many great things about laziness that I'm not even hinting at. I trust my readers to add some great links to articles speaking on the virtues of laziness in the comments :)
+**注意**
+この記事は現実とは逆に、遅延性を解決すべき問題として取り扱います。遅延性は有利にも不利にもなります。私たちの目標は遅延性の問題の大枠とその回避策を理解することなので、悪い点にのみ焦点を当てることにします。遅延性にはとても大きなメリットが数多くありますが、ここで取り上げることはしません。なぜなら、私の読者はコメントで遅延性の素晴らしさについて紹介している記事へのリンクをいくつも追加してくれるでしょうから :)
 
-# Basics of laziness
-Let's elaborate on my one liner above:
+# 遅延性の基礎
+さて、さっき言ったことを詳しく説明しましょう。
 
-> Values are only computed when they're needed
+> 値は必要となった時にのみ計算される
 
-Let's explore this by comparison with a strict language: C.
+より詳しく説明するために正格言語であるC言語と比較してみましょう。
 
 ```c
 #include <stdio.h>
@@ -37,14 +38,15 @@ int main() {
   return 0;
 }
 ```
-Our function `add` is strict in both of its arguments. And its result is also strict. This means that:
 
-- Before `add` is called the first time, we will compute the result of both `1 + 1` and `1 + 2`.
-- We will call the `add` function on `2` and `3`, get a result of `5`, and place that value in memory pointed at by the variable `five`.
-- Then we'll do the same thing with `1 + 2`, `1 + 3`, and placing `7` in `seven`.
-- Then we'll call `printf` with our `five` value, which is already fully computed.
+私たちの関数 `add` は `x` と `y` の両方の引数で正格です。そして、結果もまた正格になります。これは、上記のコードは次のような処理です。
 
-Let's compare that to the equivalent Haskell code:
+- `add` が最初に呼ばれる前に `1 + 1` と `1 + 2` の両方の結果を計算します。
+- `2` と `3` で `add` 関数を呼び出した結果 `5` が得られると、それは変数 `five` によって指し示されるメモリーの値となります。
+- 同じように `1 + 2`, `1 + 3` も計算し `seven` に `7` が格納されます。
+- 完全に計算された `five` の値で `printf` を呼びます。
+
+さて、これと同じ Haskell コードを比較してよう。
 
 ```haskell
 add :: Int -> Int -> Int
@@ -58,27 +60,28 @@ main = do
   putStrLn $ "Five: " ++ show five
 ```
 
-There's something called strictness analysis which will result in something more efficient than what I'll describe here in practice, but semantically, we'll end up with the following:
+正格性解析と呼ばれる機構により、説明よりも効率的な結果となることがありますが、意味的には以下の通りです。
 
-- Instead of immediately computing `1 + 1` and `1 + 2`, the compiler will create a thunk (which you can think of as a promise) for those computations, and pass those thunks to the `add` function.
-- Except: we won't call the `add` function right away either: `five` will be a thunk representing the application of the `add` function to the thunk for `1 + 1` and `1 + 2`.
-- We'll end up doing the same thing with `seven`: it will be a thunk for applying `add` to two other thunks.
-- When we finally try to print out the value `five`, we need to know the actual number. This is called forcing evaluation. We'll get into more detail on when and how this happens below, but for now, suffice it to say that when `putStrLn` is executed, it forces evaluation of `five`, which forces evaluation of `1 + 1` and `1 + 2`, converting the thunks into real values (`2`, `3`, and ultimately `5`).
-- Because `seven` is never used, it remains a thunk, and we don't spend time evaluating it.
+- `1 + 1` や `1 + 2` の計算をすぐに行うのではなく、コンパイラはこれらの計算のためにサンク (契約として考えることができます)  を生成し、`add` 関数にサンクを渡します。
+- `add` 関数をすぐに呼び出すという例外を除けば、`five` は `add` 関数を `1 + 1` と `1 + 2` のサンクに適用するというサンクです。
+- `seven` に関しても同様に、`add` 関数を異なる2つのサンクに適用するというサンクです。
+- 最終的に `five` を表示しようとする時に、実際の数を知る必要があります。これは強制評価 (forcing evauation) と呼ばれます。あとで詳しく、いつ・どのように強制評価が起きているのか説明しますが、今の所の理解は `putStrLn` が実行された時で十分です。`1 + 1` と `1 + 2` の強制評価を行う`five` の強制評価が行われ、サンクが実際の数 (`2`, `3`, 最終的に `5`) に変換されます。
+- `seven` は一度も使われず、サンクとして残ったままとなり、これを評価するための時間は消費していません。
 
-Compared to the C (strict) evaluation, there is one clear benefit: we don't bother wasting time evaluating the `seven` value at all. That's three addition operations bypassed, woohoo! And in a real world scenario, instead of being three additions, that could be a seriously expensive operation.
+C (正格) 評価と比較すると、無駄な時間を使って `seven` を評価する必要が全くないという明確な利点があります。これにより、処理を3つスキップできます！現実的な場面では3つではなく、もっとひどいコストのかかる処理かもしれません。
 
-*However*, it's not all rosey. Creating a thunk does not come for free: we need to allocate space for the thunk, which costs both allocation, and causes GC pressure for freeing them afterwards. Perhaps most importantly: the thunked version of an expression can be far more costly than the evaluated version. Ignoring some confusing overhead from data constructors (which only make the problem worse), let's compare our two representations of `five`. In C, `five` takes up exactly one machine word*. In Haskell, our five thunk will take up roughly:
+*だけども*、全てが素晴らしいものではありません。サンクはタダじゃないんだ。我々はサンクのためにスペースを確保しなければならず、その確保と後にメモリ解放のために行われる GC を引き起こすコストの両方がかかります。たぶん一番大切なことは、式がサンク化されたものは、評価されたものよりもずっとコストがかかる可能性があるということです。データコストラクタのオーバーヘッドとの混乱を避ける (それだけで複雑になる) ために `five` の2つの表現を比較してみましょう。C において `five` は正確に1つのマシンワード\*を消費します。Haskell の `five` サンクはだいたい以下のようになります。
 
-* Or perhaps less, as `int` is probably only 32 bits, and you're probably on a 64 bit machine. But then you get into alignment issues, and registers... so let's just say one machine word.
 
-- One machine word to say "I'm a thunk"
-- Within that thunk, pointers to the `add` function, and the `1 + 1` and `1 + 2` thunks (one machine word each). So three machine words total.
-- Within the `1 + 1` thunk, one machine word for the thunk, and then again a pointer to the `+` operator, and the `1` values. (GHC has an optimization where it will keep small int values in dedicated parts of memory, avoiding extra overhead for the ints themselves. But you could theoretically add in an extra machine word for each.) Again, conservatively: three machine words.
-- Same logic for the `1 + 2` thunk, so three more machine words.
-- For a whopping total of **10 machine words**, or 10 times the memory usage as C!
+\* またはそれよりも少ないです `int` は32ビットとして表現されますが、たぶんあなたは64ビットのマシンを使っているでしょう。しかし、整列問題によりレジスタは1つのマシンワードと言っても良いでしょう。
 
-Now in practice, it's not going to work out that way. I mentioned the strictness analysis step, which will say "hey, wait a second, it's totally better to just add two numbers than allocate a thunk, I'mma do that now, kthxbye." But it's vital when writing Haskell to understand all of these places where laziness and thunks can creep in.
+- 1つのマシンワードが "私はサンクです" と主張します
+- サンクの中は `add` 関数と `1 + 1` と `1 + 2` のサンク (それぞれ1つのマシンワード) へのポインタとなっています。そのため合計で3つのマシンワードです。
+- `1 + 1` サンクはサンクのための1つのマシンワードと `+` 演算子と `1` の値へのポインタです。(GHC は int 自身の余分なオーバーヘッドを避けるためにメモリの専用部分に小さな int の値を保持する最適化を備える。しかし、理論的にはそれぞれの余分なマシンワードが追加される)。ここでも3つのマシンワードが必要となる。
+- 同じことが `1 + 2` のサンクにも言えるので、3つのマシンワードとなります。
+- 最終的な合計は **10マシンワード** となり、C のメモリ利用量と比較して10倍の差があります！
+
+実際のところ、そういうわけではありません。私は正格性解析のステップについて少しお話しましたが、これはつまり "やぁ、ちょっと待って、これ後で使う予定だし、サンクを確保するよりも2つの数字を加算する方が絶対良いって、じゃあまたね！"という感じです。しかし、これは、遅延性やサンクが忍び込むことができるこれらの場所のすべてを理解するために Haskell を書くときに重要です。
 
 ## Bang!
 Let's look at how we can force Haskell to be more strict in its evaluation. Likely the easiest way to do this is with bang patterns. Let's look at the code first:
