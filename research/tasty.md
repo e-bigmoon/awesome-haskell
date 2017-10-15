@@ -144,7 +144,10 @@ Test suite failure for package example-tasty-0.1.0.0
 Logs printed to console
 ```
 
-### tasty-html パッケージを使う例
+# tasty-html
+
+- [stackage](https://www.stackage.org/package/tasty-html)
+- [github](https://github.com/feuerbach/tasty-html)
 
 `package.yaml` の中身
 
@@ -239,7 +242,7 @@ unitTests = testGroup "Unit tests"
 $ stack test --test-arguments="--html results.html"
 ```
 
-## golden-test
+# tasty-golden
 - [github](https://github.com/feuerbach/tasty-golden)
 - [stackage](https://www.stackage.org/package/tasty-golden)
 
