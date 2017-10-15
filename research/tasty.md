@@ -1,7 +1,7 @@
+# Tasty
+
 - [github](https://github.com/feuerbach/tasty)
 - [stackage](https://www.stackage.org/package/tasty)
-
-# Tasty
 
 **Tasty** は Haskell におけるモダンテストフレームワークです。
 
