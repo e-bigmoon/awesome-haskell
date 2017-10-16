@@ -314,3 +314,42 @@ main = do
 表示するプログラムを書いてください。
 
 *質問* 上のコードの、どこが非効率的なのでしょうか? 答えは次のセクションにあります。
+
+## より効率的なファイルハッシュ
+もしもハッシュ関数を使わなければ、さっきのプログラムの実装は、それぞれの
+ファイルの中身をメモリ上に一度に展開するか、O(n^2) のペアの比較をする
+ような変なものになっていたでしょう。さっきのハッシュを使った実装は、
+それよりも良い実装です。しかし、まだ問題があります。`Data.ByteString.readFile`
+を使っているので、際限なくメモリを使ってしまう可能性があります。
+`cryptonite-conduit` を使うと、ファイルの内容全てをもっと効率良くハッシュ
+できます。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import           Crypto.Hash         (Digest, SHA256, hash)
+import           Crypto.Hash.Conduit (hashFile)
+import           Data.Foldable       (forM_)
+import           Data.Map.Strict     (Map)
+import qualified Data.Map.Strict     as Map
+import           System.Environment  (getArgs)
+
+readFile' :: FilePath -> IO (Map (Digest SHA256) [FilePath])
+readFile' fp = do
+  digest <- hashFile fp
+  return $ Map.singleton digest [fp]
+
+main :: IO ()
+main = do
+  args <- getArgs
+  m <- Map.unionsWith (++) <$> mapM readFile' args
+  forM_ (Map.toList m) $ \(digest, files) ->
+    case files of
+      [] -> error "can never happen"
+      [_] -> return () -- only one file
+      _ -> putStrLn $ show digest ++ ": " ++ unwords (map show files)
+```
+
+かなりシンプルな変更です (というか、こっちの方が少し読みやすいのでは
+ないでしょうか)。しかし、かなりメモリ効率の良いコードになりました
+(ファイル数に対して線形時間、ファイルサイズに対しては定数時間です)。
