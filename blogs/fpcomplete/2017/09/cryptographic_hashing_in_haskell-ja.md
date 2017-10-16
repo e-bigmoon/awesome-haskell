@@ -35,3 +35,85 @@ Byte Array を扱うための型クラスと便利な関数を提供していま
 
 - Main.hs にコードをコピペする
 - `stack Main.hs` を実行
+
+## 基本的な型クラス
+`String` っぽい型を扱うのは慣れているでしょう? 正格・遅延評価される
+`ByteString` や `Text` や普通の `String` などです。正格な
+バイトシーケンスを表現する際、`Data.ByteString.ByteString` を思い
+浮かべるのではないでしょうか。しかし、これから見るように、
+バイトシーケンスとして扱いたい型はいろいろ見つかります。
+
+`memory` はこの要望に答えるべく、以下の 2つの型クラスを定義して
+います。
+
+- `ByteArrayAccess` ある型のバイトへ、読み専用のアクセスを提供
+- `ByteArray` 読み / 書きのアクセスを提供する。`ByteArrayAcccess` の
+  子クラス
+
+例えば、以下に示すコードは、意味もなく `ByteString` と `Byte` の変換を
+しています。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+{-# LANGUAGE OverloadedStrings #-}
+import qualified Data.ByteArray as BA
+import Data.ByteString (ByteString)
+import qualified Data.ByteString as B
+
+main :: IO ()
+main = do
+  B.writeFile "test.txt" "This is a test"
+  byteString <- B.readFile "test.txt"
+  let bytes :: BA.Bytes
+      bytes = BA.convert byteString
+  print bytes
+```
+
+`bytestring` ライブラリを使ってファイルの入出力から話を
+始めたのは、[入出力は `bytestring` でやるべきだからです]
+(http://www.snoyman.com/blog/2016/12/beware-of-readfile)。
+`convert`関数を使うと、`ByteString` を `Bytes` に変換する
+ことができます。
+
+*練習問題* 上の 2つの型クラスの説明を踏まえて、`convert` の
+型シグネチャは何だと思いますか? 答えは[こちら]
+(https://www.stackage.org/haddock/lts-9.4/memory-0.14.7/Data-ByteArray.html#v:convert)
+。
+
+`bytes` の値につけた、明示的な型シグネチャに気がつきましたか?
+えーと、`memory` と `cryptonite` を使っていく上で、これは大事です。
+こうして、よく GHC に、型推論についてのヒントを与えてやらないと
+いけなくなります。なぜなら、これらのライブラリの中のかなり多くの
+関数が、具体的な型ではなく、型クラスを使っているからです。
+
+さて、`ByteArrayAccess` に属する型の例をお見せしましたが、それは
+`ByteArray` についての例ではありませんでした。今は型クラスを分ける
+意味が分からないかもしれませんが、実際にハッシュを使う段階で、
+型クラスを分けることの利点が見えてくると思います。ちょっと待って
+くださいね。
+
+### なぜ違う型があるのか
+当然、`memory` の中になぜ `Bytes` という型があるのか、疑問に思う人
+もいるでしょうね。`ByteString` と同じじゃないの? ってね。
+まぁ違うんですけどね。`Bytes` はメモリスライスのオフセットと長さを
+追跡しないことで、メモリのオーバーヘッドを小さくしています。
+その代わりに、`Bytes` の値をスライスすることは許されません。
+言い換えれば、`Bytes` に関する `drop`関数は、バッファの新しいコピーを
+作らなければならないということです。
+
+まぁつまり、これはパフォーマンスの問題です。暗号を扱うライブラリは、
+一般的にパフォーマンスを重視する必要がありますからね。
+
+また別の `memory` のおもしろい型に、`ScrubbedBytes` というものが
+あります。この型は、3つの特別な性質を有しています。`Haddock` によると、
+
+- スコープの範囲から出ればゴシゴシされる
+- Showインスタンスは、中身を何 1つとして出力しない
+- 定数時間の Eqインスタンス
+
+つまり、これらの性質は何かセンシティブなデータを扱うとき、
+ありふれた脆弱性をいくつも塞いでくれるものです。
+
+うん、コードがあまりない説明になりましたね。もっと楽しい
+ことをしよう!
