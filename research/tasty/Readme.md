@@ -10,7 +10,7 @@
 Provier | 内容 | 調査結果
 --------|-------|--------
 [tasty-hunit](https://www.stackage.org/package/tasty-hunit) | |
-[tasty-golden](https://www.stackage.org/package/tasty-golden) | ゴールデンテスト。ファイルに保存した結果を単体テストする |
+[tasty-golden](https://www.stackage.org/package/tasty-golden) | ゴールデンテスト。ファイルに保存した結果を単体テストする | [example](/research/tasty/tasty-golden.md)
 [tasty-smallcheck](https://www.stackage.org/package/tasty-smallcheck) | |
 [tasty-quickcheck](https://www.stackage.org/package/tasty-quickcheck) | |
 [tasty-hspec](https://www.stackage.org/package/tasty-hspec) | |
@@ -125,13 +125,3 @@ Tests
 
 - [tasty on github](https://github.com/feuerbach/tasty)
 - [tasty on stackage](https://www.stackage.org/package/tasty)
-
-
-
-# tasty-golden
-- [github](https://github.com/feuerbach/tasty-golden)
-- [stackage](https://www.stackage.org/package/tasty-golden)
-
-ファイルの入出力などをともなうテスト (ファイルと比較する) のことをゴールデンテストと言うらしい。
-
-> A golden test is an IO action that writes its result to a file. To pass the test, this output file should be identical to the corresponding «golden» file, which contains the correct result for the test.
