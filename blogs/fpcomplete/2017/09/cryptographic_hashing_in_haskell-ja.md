@@ -183,3 +183,94 @@ main = do
 
 *練習問題*
 Base16 の入力を、Base64 のエンコードに変換するプログラムを書いてください。
+
+## 正格な `ByteString` のハッシュ
+よし、`memory`ライブラリに関する説明はもう十分でしょう。
+これからは実際に暗号的なものをやっていきます。ユーザの入力を、
+SHA256 のハッシュ値 (ダイジェスト) に変換してみましょう。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import           Crypto.Hash             (hash, SHA256 (..), Digest)
+import           Data.ByteString         (ByteString)
+import           Data.Text.Encoding      (encodeUtf8)
+import qualified Data.Text.IO            as TIO
+import           System.IO               (hFlush, stdout)
+
+main :: IO ()
+main = do
+  putStr "Enter some text: "
+  hFlush stdout
+  text <- TIO.getLine
+  let bs = encodeUtf8 text
+  putStrLn $ "You entered: " ++ show bs
+  let digest :: Digest SHA256
+      digest = hash bs
+  putStrLn $ "SHA256 hash: " ++ show digest
+```
+
+たった今、`ByteString` (かもしくは `ByteArrayAccess` のインスタンス)
+を SHA256 のダイジェストに変換するのに、`hash`関数を使いました。
+実際、SHA256 以外のハッシュアルゴリズムも指定することができます。
+
+今回の例では、`Digest SHA256` という型シグネチャが大事でした。GHC に
+どんなハッシュを使うのか知らせるためです。しかし次の例では、
+その代わりの関数が登場します。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import           Crypto.Hash             (hashWith, SHA256 (..))
+import           Data.ByteString         (ByteString)
+import           Data.Text.Encoding      (encodeUtf8)
+import qualified Data.Text.IO            as TIO
+import           System.IO               (hFlush, stdout)
+
+main :: IO ()
+main = do
+  putStr "Enter some text: "
+  hFlush stdout
+  text <- TIO.getLine
+  let bs = encodeUtf8 text
+  putStrLn $ "You entered: " ++ show bs
+  let digest = hashWith SHA256 bs
+  putStrLn $ "SHA256 hash: " ++ show digest
+```
+
+`Digest` の `Show`インスタンスは、ダイジェストを
+16進数 (Base16) で表示します。これはいいですね。しかし、これを
+Base64 で表示したい欲求にかられたらどうでしょう? 考えてみましょう。
+`Digest` は `ByteArrayAccess` のインスタンスです。なので、
+`convertToBase` を使うことができます (そして、`Digest` は `ByteArray`
+のインスタンスではありません。そうしてしまったら問題が生じるのですが、
+それはなぜでしょうか? 行き詰まったら、[この関数のドキュメント]
+(https://www.stackage.org/haddock/lts-9.3/cryptonite-0.23/Crypto-Hash.html#v:digestFromByteString)を
+読んでみましょう。答えが載っています。)。
+
+*練習問題* ダイジェストを Base64 でエンコードされた文字列として出力
+してみましょう (答えはすぐ下)。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import           Crypto.Hash             (hashWith, SHA256 (..))
+import           Data.ByteString         (ByteString)
+import           Data.ByteArray.Encoding (convertToBase, Base (Base64))
+import           Data.Text.Encoding      (encodeUtf8)
+import qualified Data.Text.IO            as TIO
+import           System.IO               (hFlush, stdout)
+
+main :: IO ()
+main = do
+  putStr "Enter some text: "
+  hFlush stdout
+  text <- TIO.getLine
+  let bs = encodeUtf8 text
+  putStrLn $ "You entered: " ++ show bs
+  let digest = convertToBase Base64 (hashWith SHA256 bs)
+  putStrLn $ "SHA256 hash: " ++ show (digest :: ByteString)
+```
+
+`digest` が `ByteString` であることを明確にするために、
+型シグネチャが必要な理由を押さえてください。
