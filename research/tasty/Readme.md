@@ -20,7 +20,7 @@ Ingredient | 内容 | 調査結果
 --------|-------|--------
 [tasty-ant-xml](https://www.stackage.org/package/tasty-ant-xml) | |
 [tasty-rerun](https://www.stackage.org/package/tasty-rerun) | |
-[tasty-html](https://www.stackage.org/package/tasty-html) | テスト結果を HTML で出力する |
+[tasty-html](https://www.stackage.org/package/tasty-html) | テスト結果を HTML で出力する | [example](/research/tasty/tasty-html.md)
 [tasty-stats](https://www.stackage.org/package/tasty-stats) | |
 
 以下、README.md の一部抜粋。
