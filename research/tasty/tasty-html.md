@@ -84,5 +84,5 @@ $ stack test --test-arguments="--html results.html"
 
 ## 参考
 
-- [tasty-htlm on github](https://github.com/feuerbach/tasty-html)
+- [tasty-htm on github](https://github.com/feuerbach/tasty-html)
 - [tasty-html on stackage](https://www.stackage.org/package/tasty-html)
