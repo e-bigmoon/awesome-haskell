@@ -93,32 +93,13 @@ unitTests =
 
 ```bash
 $ stack script tasty-example.hs --resolver=lts-9.9
-Using resolver: lts-9.9 specified on command line
-Tests
-  Properties
-    (checked by SmallCheck)
-      sort == sort . reverse:           OK (0.14s)
-        1333 tests completed
-      Fermat's little theorem:          OK
-        11 tests completed
-      Fermat's last theorem:            FAIL
-        there exist 0 0 0 3 such that
-          condition is false
-    (checked by QuickCheck)
-      sort == sort . reverse:           OK (0.04s)
-        +++ OK, passed 100 tests.
-      Fermat's little theorem:          OK
-        +++ OK, passed 100 tests.
-      Fermat's last theorem:            OK
-        +++ OK, passed 100 tests.
-  Unit tests
-    List comparison (different length): OK
-    List comparison (same length):      FAIL
-      expected: LT
-       but got: GT
-
-2 out of 8 tests failed (0.19s)
 ```
+
+こんな感じで色がつきます。
+
+![tasty-exampleの実行結果](/research/tasty/tasty.png)
+
+
 
 ## 参考
 
