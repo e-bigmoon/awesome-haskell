@@ -64,7 +64,7 @@ unitTests =
 ```
 
 ## 実行結果
-以下のように実行すると `results.html` が生成される。
+以下のように実行すると `result.html` が生成される。
 
 ```bash
 # スクリプト形式
@@ -77,6 +77,10 @@ result.html  tasty-html-example.hs
 # プロジェクト形式の場合はこのようにして引数を渡す
 $ stack test --test-arguments="--html results.html"
 ```
+
+![result.htmlのスクリーンショット](/research/tasty/tasty-html.png)
+
+マウスでクリックすると、ツリーを開いたり閉じたりできます。
 
 ## 参考
 
