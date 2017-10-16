@@ -274,3 +274,43 @@ main = do
 
 `digest` が `ByteString` であることを明確にするために、
 型シグネチャが必要な理由を押さえてください。
+
+## マッチするファイルがあるかどうか調べる
+ここにちょっとしたプログラムがあります。ユーザはコマンドライン引数として、
+複数個のファイル名を渡します。そして、プログラムは同一の内容の全てのファイルの
+リストを表示します (少なくとも、SHA256 のハッシュ値がマッチするファイルを。
+それと、以下の定義には、メモリの効率がよろしくない部分があります。見つけて
+みてください。この点についてはまた後述します)。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import           Crypto.Hash             (Digest, SHA256, hash)
+import qualified Data.ByteString         as B
+import           Data.Foldable           (forM_)
+import           Data.Map.Strict         (Map)
+import qualified Data.Map.Strict         as Map
+import           System.Environment      (getArgs)
+
+readFile' :: FilePath -> IO (Map (Digest SHA256) [FilePath])
+readFile' fp = do
+  bs <- B.readFile fp
+  let digest = hash bs -- notice lack of type signature :)
+  return $ Map.singleton digest [fp]
+
+main :: IO ()
+main = do
+  args <- getArgs
+  m <- Map.unionsWith (++) <$> mapM readFile' args
+  forM_ (Map.toList m) $ \(digest, files) ->
+    case files of
+      [] -> error "can never happen"
+      [_] -> return () -- only one file
+      --                                     unwords :: [String] -> String
+      _ -> putStrLn $ show digest ++ ": " ++ unwords (map show files)
+```
+
+*練習問題* コマンドライン引数として与えられた全てのファイルの SHA256 ハッシュ値を
+表示するプログラムを書いてください。
+
+*質問* 上のコードの、どこが非効率的なのでしょうか? 答えは次のセクションにあります。
