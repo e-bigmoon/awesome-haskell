@@ -117,3 +117,69 @@ main = do
 
 うん、コードがあまりない説明になりましたね。もっと楽しい
 ことをしよう!
+
+## Base16 エンコード/デコード
+ユーザの入力を、Base16 (16進数) に変換してみましょう。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import qualified Data.ByteArray          as BA
+import           Data.ByteArray.Encoding (convertToBase, Base (Base16))
+import           Data.ByteString         (ByteString)
+import           Data.Text.Encoding      (encodeUtf8)
+import qualified Data.Text.IO            as TIO
+import           System.IO               (hFlush, stdout)
+
+main :: IO ()
+main = do
+  putStr "Enter some text: "
+  hFlush stdout
+  text <- TIO.getLine
+  let bs = encodeUtf8 text
+  putStrLn $ "You entered: " ++ show bs
+  let encoded = convertToBase Base16 bs :: ByteString
+  putStrLn $ "Converted to base 16: " ++ show encoded
+```
+
+`convertToBase` は、どんな `ByteArrayAccess` も、与えられた
+基数を使って `ByteArray` に変換することができます。Base16 以外の
+基数には、Base64 などがあります。
+
+見てお分かりの通り、上の例では明示的に `ByteString` の型シグネチャを
+指定する必要がありました。なぜならそうしなければ、GHC が
+`ByteArrayAccess` のインスタンスの内、どれを使うべきなのか判断
+できないからです。
+
+既にお分かりかもしれませんが、全く逆の変換を行う、`convertFromBase`
+関数も存在します。この関数は、入力のフォーマットが正しくなかった場合
+にも対応できっるように、`Either String ByteArray` の値を返します。
+
+*練習問題* 入力に対して、Base16 のデコードを行うプログラムを書いてください
+(解答はすぐ下)。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import qualified Data.ByteArray          as BA
+import           Data.ByteArray.Encoding (convertFromBase, Base (Base16))
+import           Data.ByteString         (ByteString)
+import           Data.Text.Encoding      (encodeUtf8)
+import qualified Data.Text.IO            as TIO
+import           System.IO               (hFlush, stdout)
+
+main :: IO ()
+main = do
+  putStr "Enter some hexadecimal text: "
+  hFlush stdout
+  text <- TIO.getLine
+  let bs = encodeUtf8 text
+  putStrLn $ "You entered: " ++ show bs
+  case convertFromBase Base16 bs of
+    Left e -> error $ "Invalid input: " ++ e
+    Right decoded ->
+      putStrLn $ "Converted from base 16: " ++ show (decoded :: ByteString)
+```
+
+*練習問題*
+Base16 の入力を、Base64 のエンコードに変換するプログラムを書いてください。
