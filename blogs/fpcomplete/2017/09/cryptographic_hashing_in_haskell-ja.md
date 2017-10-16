@@ -353,3 +353,101 @@ main = do
 かなりシンプルな変更です (というか、こっちの方が少し読みやすいのでは
 ないでしょうか)。しかし、かなりメモリ効率の良いコードになりました
 (ファイル数に対して線形時間、ファイルサイズに対しては定数時間です)。
+
+## ストリーム・ハッシュ
+`conduit` と聞いて、耳か目が即座に反応したかもしれません。質問された
+体で答えましょう。はい、ハッシュに関してもストリーミング処理ができます。
+ここに、URL とファイルパスを受け取って、その URL の response body の中身を
+ファイルパスに書きこみ、SHA256 でダイジェストを表示するプログラムがあります。
+そして、それぞれのデータチャンクを 1回しか参照しないのがいいですね。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import Conduit
+import Crypto.Hash         (Digest, SHA256, hash)
+import Crypto.Hash.Conduit (sinkHash)
+import Network.HTTP.Simple
+import System.Environment  (getArgs)
+
+main :: IO ()
+main = do
+  args <- getArgs
+  (url, fp) <-
+    case args of
+      [x, y] -> return (x, y)
+      _ -> error $ "Expected: URL FILEPATH"
+  req <- parseRequest url
+  digest <- runResourceT $ httpSink req $ \_res -> getZipSink $
+    ZipSink (sinkFile fp) *>
+    ZipSink sinkHash
+  print (digest :: Digest SHA256)
+```
+
+`conduit` にできるなら、もちろんあなたにもできるはずです。`conduit` を使わずに、
+`hashFile` を実装してみましょう。こうすることで、ハッシュの API の内部が
+いくらか分かります。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import Crypto.Hash
+import System.Environment  (getArgs)
+import System.IO (withBinaryFile, IOMode (ReadMode))
+import Data.Foldable (forM_)
+import qualified Data.ByteString as B
+
+hashFile :: HashAlgorithm ha => FilePath -> IO (Digest ha)
+hashFile fp = withBinaryFile fp ReadMode $ \h ->
+  let loop context = do
+        chunk <- B.hGetSome h 4096
+        if B.null chunk
+          then return $ hashFinalize context
+          else loop $! hashUpdate context chunk
+   in loop hashInit
+
+main :: IO ()
+main = do
+  args <- getArgs
+  forM_ args $ \fp -> do
+    digest <- hashFile fp
+    putStrLn $ show (digest :: Digest SHA256) ++ "  " ++ fp
+```
+
+この実装では `Crypto.Hash` で提供されている純粋なハッシュ更新用関数を
+使っています。今回の場合、いくつかバッファのコピーをスキップすることで、
+もう少し効率の良い実装を可能にする、可変ハッシュの関数を使うことが
+できます。
+
+```haskell
+#!/usr/bin/env stack
+-- stack --resolver lts-9.3 script
+import Crypto.Hash
+import Crypto.Hash.IO
+import System.Environment  (getArgs)
+import System.IO (withBinaryFile, IOMode (ReadMode))
+import Data.Foldable (forM_)
+import qualified Data.ByteString as B
+
+hashFile :: HashAlgorithm ha => FilePath -> IO (Digest ha)
+hashFile fp = withBinaryFile fp ReadMode $ \h -> do
+  context <- hashMutableInit
+  let loop = do
+        chunk <- B.hGetSome h 4096
+        if B.null chunk
+          then hashMutableFinalize context
+          else do
+            hashMutableUpdate context chunk
+            loop
+  loop
+
+main :: IO ()
+main = do
+  args <- getArgs
+  forM_ args $ \fp -> do
+    digest <- hashFile fp
+    putStrLn $ show (digest :: Digest SHA256) ++ "  " ++ fp
+```
+
+*練習問題* 遅延入出力と `hashlazy`関数を使って、`hashFile` を
+実装してください (遅延入出力はされません)。
