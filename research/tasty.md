@@ -246,4 +246,6 @@ $ stack test --test-arguments="--html results.html"
 - [github](https://github.com/feuerbach/tasty-golden)
 - [stackage](https://www.stackage.org/package/tasty-golden)
 
-ファイルの入出力などをともなうテストのことをゴールデンテストと言うらしい。
+ファイルの入出力などをともなうテスト (ファイルと比較する) のことをゴールデンテストと言うらしい。
+
+> A golden test is an IO action that writes its result to a file. To pass the test, this output file should be identical to the corresponding «golden» file, which contains the correct result for the test.
