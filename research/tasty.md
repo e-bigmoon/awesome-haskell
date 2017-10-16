@@ -1,7 +1,34 @@
 # Tasty
 
-- [github](https://github.com/feuerbach/tasty)
-- [stackage](https://www.stackage.org/package/tasty)
+`Tasty` を使う個人的なメリットとしては
+
+- `Providers` (テスト処理。 `hspec` や `quickcheck` など) と `Ingredients` (テストした結果に対する処理。`terminal` に出力や `html` に出力など) が分離されているため、好きな組み合わせにできる
+- `tasty-golden` が良い
+
+# 情報源
+
+- [tasty on github](https://github.com/feuerbach/tasty)
+- [tasty on stackage](https://www.stackage.org/package/tasty)
+
+# Provider と Ingredient
+
+Provier | 内容
+--------|-------
+[tasty-hunit](https://www.stackage.org/package/tasty-hunit) |
+[tasty-golden](https://www.stackage.org/package/tasty-golden) | ゴールデンテスト。ファイルに保存した結果を単体テストする
+[tasty-smallcheck](https://www.stackage.org/package/tasty-smallcheck) |
+[tasty-quickcheck](https://www.stackage.org/package/tasty-quickcheck) |
+[tasty-hspec](https://www.stackage.org/package/tasty-hspec) |
+[tasty-program](https://www.stackage.org/package/tasty-program) |
+
+Ingredient | 内容
+--------|-------
+[tasty-ant-xml](https://www.stackage.org/package/tasty-ant-xml) |
+[tasty-rerun](https://www.stackage.org/package/tasty-rerun) |
+[tasty-html](https://www.stackage.org/package/tasty-html) | テスト結果を HTML で出力する
+[tasty-stats](https://www.stackage.org/package/tasty-stats) |
+
+以下、README.md の一部抜粋。
 
 **Tasty** は Haskell におけるモダンテストフレームワークです。
 
@@ -16,45 +43,10 @@
 - ソケット、一時ファイルなどの確保・解放を各テストで共有できます。
 - 拡張性があります。add your own test providers and ingredients (runners) above and beyond those provided
 
-## Example
-### Readme に載っているやつ
-`package.yaml` の内容
-
-```yaml
-name:                example-tasty
-version:             0.1.0.0
-#synopsis:
-#description:
-homepage:            https://github.com/githubuser/example-tasty#readme
-license:             BSD3
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2017 Author name here
-category:            Web
-extra-source-files:
-- README.md
-
-dependencies:
-  - base >= 4.7 && < 5
-
-executables:
-  example-tasty:
-    source-dirs:      src
-    main:             Main.hs
-
-tests:
-  tasty:
-    main: src/test.hs
-    dependencies:
-    - tasty
-    - tasty-quickcheck
-    - tasty-hunit
-    - tasty-smallcheck
-```
-
-`src/test.hs` の内容。
+## Readme の Example
 
 ```haskell
+-- readme-example.hs
 import Test.Tasty
 import Test.Tasty.SmallCheck as SC
 import Test.Tasty.QuickCheck as QC
@@ -106,13 +98,12 @@ unitTests = testGroup "Unit tests"
 実行すると次のようになる。
 
 ```bash
-$ stack test
-example-tasty-0.1.0.0: test (suite: tasty)
-
+$ stack script readme-example.hs --resolver=lts-9.9
+Using resolver: lts-9.9 specified on command line
 Tests
   Properties
     (checked by SmallCheck)
-      sort == sort . reverse:           OK (0.19s)
+      sort == sort . reverse:           OK (0.14s)
         1333 tests completed
       Fermat's little theorem:          OK
         11 tests completed
@@ -120,28 +111,19 @@ Tests
         there exist 0 0 0 3 such that
           condition is false
     (checked by QuickCheck)
-      sort == sort . reverse:           OK
+      sort == sort . reverse:           OK (0.04s)
         +++ OK, passed 100 tests.
       Fermat's little theorem:          OK
         +++ OK, passed 100 tests.
-      Fermat's last theorem:            FAIL
-        *** Failed! Falsifiable (after 3 tests):
-        -2
-        2
-        0
-        3
-        Use --quickcheck-replay '3 TFGenR BE66C1757F4A4CFC1E3B5AF61FE24B79B44F7EB2B14B8C6F38B474ECD73AE835 0 255 8 0' to reproduce.
+      Fermat's last theorem:            OK
+        +++ OK, passed 100 tests.
   Unit tests
     List comparison (different length): OK
     List comparison (same length):      FAIL
       expected: LT
        but got: GT
 
-3 out of 8 tests failed (0.20s)
-
-Test suite failure for package example-tasty-0.1.0.0
-    tasty:  exited with: ExitFailure 1
-Logs printed to console
+2 out of 8 tests failed (0.19s)
 ```
 
 # tasty-html
