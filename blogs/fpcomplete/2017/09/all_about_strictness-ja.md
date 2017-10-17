@@ -82,8 +82,8 @@ C の (正格) 評価と比較すると、使われることのない `seven` �
 
 実際のところ、そういうわけではありません。私は正格性解析のステップについて少しお話しましたが、これは "やぁ、ちょっと待って、これは後で使うからサンクを確保するよりも2つの数字を加算する方が絶対良いって、じゃあまたね！" という感じです。しかし、これは、遅延性やサンクが忍び込むことができるこれらの場所のすべてを理解するために Haskell を書くときに重要です。
 
-## Bang!
-Let's look at how we can force Haskell to be more strict in its evaluation. Likely the easiest way to do this is with bang patterns. Let's look at the code first:
+## バン!
+さて、どうすれば Haskell の評価をより正格にできるのでしょうか。一番簡単なのはバンパターンを使う方法です。まずはコードを先に確認してみましょう。
 
 ```haskell
 {-# LANGUAGE BangPatterns #-}
@@ -98,22 +98,22 @@ main = do
   putStrLn $ "Five: " ++ show five
 ```
 
-This code now behaves exactly like the strict C code. Because we've put a bang (`!`) in front of the `x` and `y` in the `add` function, GHC knows that it must force evaluation of those values before evaluating it. Similarly, by placing bangs on `five` and `seven`, GHC must evaluate these immediately, before getting to `putStrLn`.
+このコードは正格な C のコードと全く同じ動作をします。先ほどのコードの違いは `add` 関数の `x` と `y` の前にバン (`!`) があるからです。これによって GHC は `add` を評価する前に `x` と `y` の値を評価しなければならないと判断します。同様に `five` と `seven` の前にも `!` があるため、 GHC は `putStrLn` の前にこれらの値を評価します。
 
-As with many things in Haskell, however, bang patterns are just syntactic sugar for something else. And in this case, that something else is the `seq` function. This function looks like:
+Haskell には多くのものがありますが、バンパターンはただのシンタックスシュガーです。また、この場合は `seq` 関数が使われます。この関数は以下のような型です。
 
 ```haskell
 seq :: a -> b -> b
 ```
 
-You could implement this type signature yourself, of course, by just ignoring the `a` value:
+この型シグネチャを見ると、`a` の値を無視するような以下の実装にしたくなるでしょう。
 
 ```haskell
 badseq :: a -> b -> b
 badseq a b = b
 ```
 
-However, `seq` uses primitive operations from GHC itself to ensure that, when `b` is evaluated, `a` is evaluated too. Let's rewrite our `add` function to use `seq` instead of bang patterns:
+けれども、 `seq` は GHC が提供しているプリミティブな操作を使って`b` が評価されてから `a` が評価されることを保証する関数です。ここで先ほどの `add` 関数をバンパターンの代わりに `seq` を使って書き換えてみましょう。
 
 ```haskell
 add :: Int -> Int -> Int
@@ -126,17 +126,17 @@ add x y =
 add x y = x `seq` y `seq` x + y
 ```
 
-What this is saying is this:
+これはこのような意味です。
 
-- `part1` is an expression which will tell you the value of `part2`, after it evaluates `x`
-- `part2` is an expression which will tell you the value of `answer`, after it evaluates `y`
-- `answer` is just `x + y`
+- `part1` は `x` を評価した後に `part2` の値を評価します
+- `part2` は `y` を評価した後に `answer` の値を評価します
+- `answer` はそのまま `x + y` です
 
-Of course, that's a long way to write this out, and the pattern is common enough that people will usually just use `seq` infix as demonstrated above.
+もちろん、`let` と `in` を使ってこんなに長いコードを書くには大変なので、大抵のプログラマは最後の行のように `seq` を中置記法で使います。
 
-**EXERCISE** What would happen if, instead of `in part1`, the code said `in part2`? How about `in answer`?
+**練習問題** `in part1` の代わりに `in part2` とした場合どうなるでしょうか？また `in answer` ではどうでしょうか？
 
-There is always a straightforward translation from bang patterns to usage of `let`. We can do the same with the `main` function:
+バンパターンから `let` を使う方法への変換はどんな場合でも可能です。先ほどの `main` 関数は次のように書き換えても同じことです。
 
 ```haskell
 main :: IO ()
@@ -147,7 +147,7 @@ main = do
   five `seq` seven `seq` putStrLn ("Five: " ++ show five)
 ```
 
-It's vital to understand how `seq` is working, but there's no advantage to using it over bang patterns where the latter are clear and easy to read. Choose whichever option makes the code easiest to read, which will often be bang patterns.
+これは `seq` の動作を理解するために非常に重要な例ですが、コードが読みやすくなるという点を除けばバンパターンを使ったものと同一です。なので、自分の読みやすい方を使ってください。たぶん大半はバンパターンを使うでしょうけども。
 
 ## Tracing evaluation
 So far, you've just had to trust me about the evaluation of thunks occurring. Let's see a method to more directly observe evaluation. The `trace` function from `Debug.Trace` will print a message when it is evaluated. Take a guess at the output of these programs:
