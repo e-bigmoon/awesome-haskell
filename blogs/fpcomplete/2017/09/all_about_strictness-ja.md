@@ -149,8 +149,9 @@ main = do
 
 これは `seq` の動作を理解するために非常に重要な例ですが、コードが読みやすくなるという点を除けばバンパターンを使ったものと同一です。なので、自分の読みやすい方を使ってください。たぶん大半はバンパターンを使うでしょうけども。
 
-## Tracing evaluation
-So far, you've just had to trust me about the evaluation of thunks occurring. Let's see a method to more directly observe evaluation. The `trace` function from `Debug.Trace` will print a message when it is evaluated. Take a guess at the output of these programs:
+## 評価を追ってみよう
+
+今まで、サンクの評価について私の説明が全てでした。これから、評価について、もっと直接的に観測するための方法について説明します。`Debug.Trace` モジュールで定義されている `trace` 関数は評価された時にメッセージを表示します。以下のプログラムの出力を予想してください。
 
 ```haskell
 #!/usr/bin/env stack
@@ -167,8 +168,6 @@ main = do
 
   putStrLn $ "Five: " ++ show five
 ```
-
-Versus:
 
 ```haskell
 #!/usr/bin/env stack
@@ -187,17 +186,17 @@ main = do
   putStrLn $ "Five: " ++ show five
 ```
 
-Think about this before looking at the answer...
+それぞれのプログラムで表示される内容は・・・
 
-OK, hope you had a good think. Here's the answer:
+もうわかりましたね。答えは以下の通りです。
 
-- The first program will print both `five` and `Five: 5`. It will not bother printing `seven`, since that expression is never forced. (Due to strangeness around output buffering, you may see interleaving of these two output values.)
-- The second will print both `five` and `seven`, because the bang patterns force their evaluation. However, the order of their output may be different than you expect. On my system, for example, `seven` prints before `five`. That's because GHC retains the right to rearrange order of evaluation in these cases.
-- By contrast, if you use ``five `seq` seven `seq` putStrLn ("Five: " ++ show five)``, it comes out in the order you would intuitively expect: first five, then seven, and then "Five: 5". This gives a bit of a lie to my claim that bang patterns are always a simple translation to `seq`s. However, the fact is that with an expression ``x `seq` y``, GHC is free to choose whether it evaluates `x` or `y` first, as long as it ensure that when that expression finishes evaluating, both `x` and `y` are evaluated.
+- 最初のプログラムは `five` と `Fie: 5` の両方を表示します。`seven` は式を評価する必要が無いため、表示されません。(出力のバッファリングによっては、これらの値の表示順序が入れ替わるという奇妙な現象が起きることがあります。)
+- 2つ目のプログラムは `five` と `seven` の両方を表示します。なぜなら、バンパターンによってこれらの評価が強制されるからです。しかし、この表示順についてはあなたが期待するものと異なっていたのではないでしょうか。現に、私のシステムでは `five` が表示される前に `seven` が表示されました。なぜなら、この場合において GHC は評価順を並び替えることができるからです。
+- 逆に ``five `seq` seven `seq` putStrLn ("Five: " ++ show five)`` としていたら、表示される順序は `five`, `seven`, `"Five: 5"` となっていたでしょう。これはバンパターンが単に `seq` に変換されるという先ほどの説明でほんの少しだけ嘘をついたからです。しかし、 ``x `seq` y`` という式は実際のところ、GHC からすれば `x` と `y` のどちらを先に評価したとしても、式の評価が終わった時に `x` と `y` の両方が評価されていることが保証されていれば良いのです。
 
-All that said: as long as your expressions are truly pure, you will be unable to observe the difference between `x` and `y` evaluating first. Only the fact that we used `trace`, which is an impure function, allowed us to observe the order of evaluation.
+この際、全部言ってしまいますが、あたなの式が本当に純粋であれば、`x` と `y` の評価がどちらから行われるかということは観測できなかったはずです。純粋では無い `trace` 関数を利用したからこそ、評価順を観測することができたんです。
 
-**QUESTION** Does the result change at all if you put bangs on the `add` function? Why do bangs there affect (or not affect) the output?
+**質問** もし、全ての `add` 関数に `!` をつけたら結果はどう変わるでしょうか？ なぜ `!` を付けるだけで出力に影響したり (しなかったり) するのでしょうか？
 
 ## The value of bottom
 This is all well and good, but the more standard way to demonstrate evaluation order is to use bottom values, aka `undefined`. `undefined` is special in that, when it is evaluated, it throws a runtime exception. (The `error` function does the same thing, as do a few other special functions and values.) To demonstrate the same thing about `seven` not being evaluated without the bangs, compare these two programs:
