@@ -1,1 +1,8 @@
-# Haskell syoshinsha heno advice
+# Haskell 初心者へのアドバイス
+この記事では、Haskell 初心者に勉強方法を聞かれたときによくするアドバイスをまとめます。
+
+まず最初に、私は大体 [Haskell Programming from first principles](http://haskellbook.com/) という本を読んでみることをおすすめします。
+主に、この本は細かな部分を取りこぼさずに Haskell について教えてくれて、理解度を確かめるための豊富な例を提供してくれるから、という理由からです。
+これで、最初のプログラミング言語として Haskell を勉強する人にとっては十分でしょう。
+
+しかしここでは、他の言語を勉強した上で Haskell を始めようとしている人たちへのアドバイスもしておきましょう。
