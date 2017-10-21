@@ -1,0 +1,1 @@
+# Haskell syoshinsha heno advice
