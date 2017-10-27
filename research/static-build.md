@@ -7,9 +7,15 @@
 
 ```dockerfile
 FROM alpine
+
+# INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
 RUN apk update
 RUN apk add alpine-sdk git ca-certificates ghc gmp-dev zlib-dev
+
+# GRAB A RECENT BINARY OF STACK
 RUN curl -sSL https://get.haskellstack.org/ | sh
+
+# COMPILE
 RUN git clone --recursive https://github.com/ucsd-progsys/liquidhaskell.git
 WORKDIR liquidhaskell
 RUN git checkout master
