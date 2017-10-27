@@ -3,6 +3,17 @@
 - alpine (buxybox)で動かしたい
 - [LiquidHaskell](https://github.com/ucsd-progsys/liquidhaskell/tree/master) で実験
 
+## ファイルサイズまとめ
+
+名前 | 動的リンク | 静的リンク | opt1 | opt2
+------|--------|--------|------|-----
+fixpoint | 13.7M | 14.3M | 14.3M |
+liquid | 92.2M | 93.5M | 93.5M |
+target | 69.7M | 70.3M | 70.3M |
+
+- opt1: -optc-Os
+- opt2: --split-objs
+
 ## バイナリ (動的リンク)
 
 ```dockerfile
@@ -106,7 +117,7 @@ RUN ldd /sbin/target || true
 RUN du -hs /sbin/target
 ```
 
-## ログ
+### ログ
 
 ```bash
 Step 12/17 : RUN ldd /sbin/fixpoint || true
@@ -140,18 +151,76 @@ Step 17/17 : RUN du -hs /sbin/target
  ---> 1b4c774d19da
 ```
 
+## -optc-Os
 
-## ファイルサイズ
+```docker
+FROM alpine
+# INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
+RUN apk update
+RUN apk add alpine-sdk git ca-certificates ghc gmp-dev zlib-dev
+# GRAB A RECENT BINARY OF STACK
+RUN curl -sSL https://get.haskellstack.org/ | sh
+# FIX https://bugs.launchpad.net/ubuntu/+source/gcc-4.4/+bug/640734
+WORKDIR /usr/lib/gcc/x86_64-alpine-linux-musl/6.3.0/
+RUN cp crtbeginT.o crtbeginT.o.orig
+RUN cp crtbeginS.o crtbeginT.o
+# COMPILE
+RUN git clone --recursive https://github.com/ucsd-progsys/liquidhaskell.git
+WORKDIR liquidhaskell
+RUN git checkout master
+RUN stack --local-bin-path /sbin install --system-ghc --ghc-options '-optl-static -fPIC -optc-Os'
+# SHOW INFORMATION
+RUN ldd /sbin/fixpoint || true
+RUN du -hs /sbin/fixpoint
+RUN ldd /sbin/liquid || true
+RUN du -hs /sbin/liquid
+RUN ldd /sbin/target || true
+RUN du -hs /sbin/target
+```
 
-名前 | 動的リンク | 静的リンク | opt1
-------|--------|--------|----
-fixpoint | 13.7M | 14.3M |
-liquid | 92.2M | 93.5M |
-target | 69.7M | 70.3M |
+### ログ
 
-- opt1: -Os
-- opt2: 
+```bash
+Step 12/17 : RUN ldd /sbin/fixpoint || true
+ ---> Running in ad001593cba1
+ldd: /sbin/fixpoint: Not a valid dynamic program
+ ---> b7249e857a60
+Removing intermediate container ad001593cba1
+Step 13/17 : RUN du -hs /sbin/fixpoint
+ ---> Running in 9eb73b58da78
+14.3M	/sbin/fixpoint
+ ---> 6c7d3b09651f
+Removing intermediate container 9eb73b58da78
+Step 14/17 : RUN ldd /sbin/liquid || true
+ ---> Running in 5452e4c09afb
+ldd: /sbin/liquid: Not a valid dynamic program
+ ---> 47117ced6a4a
+Removing intermediate container 5452e4c09afb
+Step 15/17 : RUN du -hs /sbin/liquid
+ ---> Running in 859ce30e554d
+93.5M	/sbin/liquid
+ ---> dc56c4a1827e
+Removing intermediate container 859ce30e554d
+Step 16/17 : RUN ldd /sbin/target || true
+ ---> Running in 0ce446b21d1c
+ldd: /sbin/target: Not a valid dynamic program
+ ---> 6bce6b7a06b8
+Removing intermediate container 0ce446b21d1c
+Step 17/17 : RUN du -hs /sbin/target
+ ---> Running in a5f7dc80af6d
+70.3M	/sbin/target
+ ---> 37b7550033e9
+```
 
+## --split-objs
+
+```docker
+```
+
+### ログ
+
+```bash
+```
 
 
 ## 参考リンク
