@@ -3,6 +3,11 @@
 - alpine (buxybox) で動かしたい
 - [LiquidHaskell](https://github.com/ucsd-progsys/liquidhaskell/tree/master) で実験
 
+以下の情報が大変参考となる。
+- [nnwww/haskell-stack-link](https://hub.docker.com/r/nnwww/haskell-stack-link/)
+- [Building static binaries program: A convoluted docker-based approach](https://www.reddit.com/r/haskell/comments/6xuiy7/building_static_binaries_program_a_convoluted/dmjqode/)
+- [Created docker images to build a static binary for Haskell/GHC8](http://nnwww.hatenablog.com/entry/2017/09/25/231941)
+
 ## ファイルサイズまとめ
 
 名前 | 動的リンク | 静的リンク | -optc-Os | --split-objs | UPX
