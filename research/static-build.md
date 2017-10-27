@@ -44,7 +44,7 @@ RUN du -hs /sbin/target
 
 ### ログ
 
-```
+```bash
 Step 9/14 : RUN ldd /sbin/fixpoint || true
  ---> Running in aff89ae2460f
 	/lib/ld-musl-x86_64.so.1 (0x7f15a7d62000)
@@ -93,7 +93,7 @@ Step 14/14 : RUN du -hs /sbin/target
 
 ## バイナリ (静的リンク)
 
-```docker
+```dockerfile
 FROM alpine
 # INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
 RUN apk update
@@ -154,7 +154,7 @@ Step 17/17 : RUN du -hs /sbin/target
 
 ## -optc-Os
 
-```docker
+```dockerfile
 FROM alpine
 # INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
 RUN apk update
@@ -215,7 +215,7 @@ Step 17/17 : RUN du -hs /sbin/target
 
 ## --split-objs
 
-```docker
+```dockerfile
 FROM alpine AS build-lh
 # INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
 RUN apk update
@@ -283,7 +283,7 @@ Successfully tagged waddlaw/liquidhaskell:latest
 - [UPX on github](https://github.com/upx/upx)
 - [docker-upx](https://github.com/lalyos/docker-upx)
 
-```docker
+```dockerfile
 FROM alpine AS build-lh
 # INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
 RUN apk update
