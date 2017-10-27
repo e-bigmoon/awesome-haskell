@@ -3,7 +3,7 @@
 - alpine (buxybox)で動かしたい
 - [LiquidHaskell](https://github.com/ucsd-progsys/liquidhaskell/tree/master) で実験
 
-## バイナリ (動的リンク) の作り方
+## バイナリ (動的リンク)
 
 ```dockerfile
 FROM alpine
@@ -79,13 +79,78 @@ Step 14/14 : RUN du -hs /sbin/target
  ---> 055259003cd6
 ```
 
+## バイナリ (静的リンク)
+
+```docker
+FROM alpine
+# INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
+RUN apk update
+RUN apk add alpine-sdk git ca-certificates ghc gmp-dev zlib-dev
+# GRAB A RECENT BINARY OF STACK
+RUN curl -sSL https://get.haskellstack.org/ | sh
+# FIX https://bugs.launchpad.net/ubuntu/+source/gcc-4.4/+bug/640734
+WORKDIR /usr/lib/gcc/x86_64-alpine-linux-musl/6.3.0/
+RUN cp crtbeginT.o crtbeginT.o.orig
+RUN cp crtbeginS.o crtbeginT.o
+# COMPILE
+RUN git clone --recursive https://github.com/ucsd-progsys/liquidhaskell.git
+WORKDIR liquidhaskell
+RUN git checkout master
+RUN stack --local-bin-path /sbin install --system-ghc --ghc-options '-optl-static -fPIC'
+# SHOW INFORMATION
+RUN ldd /sbin/fixpoint || true
+RUN du -hs /sbin/fixpoint
+RUN ldd /sbin/liquid || true
+RUN du -hs /sbin/liquid
+RUN ldd /sbin/target || true
+RUN du -hs /sbin/target
+```
+
+## ログ
+
+```bash
+Step 12/17 : RUN ldd /sbin/fixpoint || true
+ ---> Running in f7a6acfcda18
+ldd: /sbin/fixpoint: Not a valid dynamic program
+ ---> 761b6dc7b96e
+Removing intermediate container f7a6acfcda18
+Step 13/17 : RUN du -hs /sbin/fixpoint
+ ---> Running in 8c8f595cef8e
+14.3M	/sbin/fixpoint
+ ---> 4c0d2ef2fd10
+Removing intermediate container 8c8f595cef8e
+Step 14/17 : RUN ldd /sbin/liquid || true
+ ---> Running in 7c193b01d21a
+ldd: /sbin/liquid: Not a valid dynamic program
+ ---> 2d4ab39a3dcd
+Removing intermediate container 7c193b01d21a
+Step 15/17 : RUN du -hs /sbin/liquid
+ ---> Running in 210676e34526
+93.5M	/sbin/liquid
+ ---> cd78ff84786c
+Removing intermediate container 210676e34526
+Step 16/17 : RUN ldd /sbin/target || true
+ ---> Running in 37f5b3aa9998
+ldd: /sbin/target: Not a valid dynamic program
+ ---> 16a9519c890d
+Removing intermediate container 37f5b3aa9998
+Step 17/17 : RUN du -hs /sbin/target
+ ---> Running in 9c12a21d636b
+70.3M	/sbin/target
+ ---> 1b4c774d19da
+```
+
+
 ## ファイルサイズ
 
-名前 | 動的リンク | 静的リンク
-------|--------|--------
-fixpoint | 13.7M | 
-liquid | 92.2M |
-target | 69.7M |
+名前 | 動的リンク | 静的リンク | opt1
+------|--------|--------|----
+fixpoint | 13.7M | 14.3M |
+liquid | 92.2M | 93.5M |
+target | 69.7M | 70.3M |
+
+- opt1: -Os
+- opt2: 
 
 
 
