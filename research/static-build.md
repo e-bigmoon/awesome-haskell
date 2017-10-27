@@ -8,13 +8,13 @@
 名前 | 動的リンク | 静的リンク | -optc-Os | --split-objs | UPX
 -----|---------|-----------|----------|-------------|-------
 fixpoint | 13.7M | 14.3M | 14.3M | 6.3M (55.94% 減) | 1.2M (91.60% 減)
-liquid | 92.2M | 93.5M | 93.5M | 77.8M (16.79% 減) | 
-target | 69.7M | 70.3M | 70.3M | 63.3M (9.96% 減) | 
-合計 | 175.6M | 178.1M | 178.1M | 147.4M (17.24% 減) |
+liquid | 92.2M | 93.5M | 93.5M | 77.8M (16.79% 減) | 9.4M (89.95% 減)
+target | 69.7M | 70.3M | 70.3M | 63.3M (9.96% 減) | 7.4M (89.47% 減)
+合計 | 175.6M | 178.1M | 178.1M | 147.4M (17.24% 減) | 18M (89.19% 減)
 
 - `-optc-Os`: 効果無し
 - `--split-objs`: 場合によっては大幅なファイルサイズ減につながる
-- `UPX`: 
+- `UPX`: 絶大な効果があるが、バイナリサイズに応じてかなりの時間がかかる
 
 ## バイナリ (動的リンク)
 
@@ -312,6 +312,35 @@ RUN du -hs /sbin/target
 ### ログ
 
 ```bash
+Step 17/22 : RUN ldd /sbin/fixpoint || true
+ ---> Running in 188f6ff6e176
+ldd: /sbin/fixpoint: Not a valid dynamic program
+ ---> 63909cfe9363
+Removing intermediate container 188f6ff6e176
+Step 18/22 : RUN du -hs /sbin/fixpoint
+ ---> Running in ab877c35faa8
+1.2M	/sbin/fixpoint
+ ---> 54a2b57c7363
+Removing intermediate container ab877c35faa8
+Step 19/22 : RUN ldd /sbin/liquid || true
+ ---> Running in 9e2746e498f5
+ldd: /sbin/liquid: Not a valid dynamic program
+ ---> 2e86f2d0e11d
+Removing intermediate container 9e2746e498f5
+Step 20/22 : RUN du -hs /sbin/liquid
+ ---> Running in 2295a26ef8b8
+9.4M	/sbin/liquid
+ ---> 203c78f44650
+Removing intermediate container 2295a26ef8b8
+Step 21/22 : RUN ldd /sbin/target || true
+ ---> Running in c74b46020927
+ldd: /sbin/target: Not a valid dynamic program
+ ---> e687c65f3f75
+Removing intermediate container c74b46020927
+Step 22/22 : RUN du -hs /sbin/target
+ ---> Running in 3ccc995ed0ad
+7.4M	/sbin/target
+ ---> 6fadae7f4c16
 ```
 
 
