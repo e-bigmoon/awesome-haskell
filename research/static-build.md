@@ -1,18 +1,19 @@
 # バイナリ (静的リンク) の作り方
 
-- alpine (buxybox)で動かしたい
+- alpine (buxybox) で動かしたい
 - [LiquidHaskell](https://github.com/ucsd-progsys/liquidhaskell/tree/master) で実験
 
 ## ファイルサイズまとめ
 
-名前 | 動的リンク | 静的リンク | opt1 | opt2
-------|--------|--------|------|-----
-fixpoint | 13.7M | 14.3M | 14.3M |
-liquid | 92.2M | 93.5M | 93.5M |
-target | 69.7M | 70.3M | 70.3M |
+名前 | 動的リンク | 静的リンク | -optc-Os | --split-objs | UPX
+-----|---------|-----------|----------|-------------|-------
+fixpoint | 13.7M | 14.3M | 14.3M | 6.3M (55.94% 減) | 
+liquid | 92.2M | 93.5M | 93.5M | 77.8M (16.79% 減) | 
+target | 69.7M | 70.3M | 70.3M | 63.3M (9.96% 減) | 
 
-- opt1: -optc-Os
-- opt2: --split-objs
+- `-optc-Os`: 効果無し
+- `--split-objs`: 場合によっては大幅なサイズ減少につながる
+- `UPX`: 
 
 ## バイナリ (動的リンク)
 
@@ -215,6 +216,96 @@ Step 17/17 : RUN du -hs /sbin/target
 ## --split-objs
 
 ```docker
+FROM alpine AS build-lh
+# INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
+RUN apk update
+RUN apk add alpine-sdk git ca-certificates ghc gmp-dev zlib-dev
+# GRAB A RECENT BINARY OF STACK
+RUN curl -sSL https://get.haskellstack.org/ | sh
+# FIX https://bugs.launchpad.net/ubuntu/+source/gcc-4.4/+bug/640734
+WORKDIR /usr/lib/gcc/x86_64-alpine-linux-musl/6.3.0/
+RUN cp crtbeginT.o crtbeginT.o.orig
+RUN cp crtbeginS.o crtbeginT.o
+# COMPILE
+RUN git clone --recursive https://github.com/ucsd-progsys/liquidhaskell.git
+WORKDIR liquidhaskell
+RUN git checkout master
+RUN stack --local-bin-path /sbin install --system-ghc --ghc-options '-optl-static -fPIC -optc-Os' --split-objs
+# SHOW INFORMATION
+RUN ldd /sbin/fixpoint || true
+RUN du -hs /sbin/fixpoint
+RUN ldd /sbin/liquid || true
+RUN du -hs /sbin/liquid
+RUN ldd /sbin/target || true
+RUN du -hs /sbin/target
+```
+
+### ログ
+
+```bash
+Step 12/17 : RUN ldd /sbin/fixpoint || true
+ ---> Running in 5092b4f398c8
+ldd: /sbin/fixpoint: Not a valid dynamic program
+ ---> 2799a97f1381
+Removing intermediate container 5092b4f398c8
+Step 13/17 : RUN du -hs /sbin/fixpoint
+ ---> Running in c0c64f74e657
+6.3M	/sbin/fixpoint
+ ---> b1235c1e4ab7
+Removing intermediate container c0c64f74e657
+Step 14/17 : RUN ldd /sbin/liquid || true
+ ---> Running in 42b1d4cb5eb7
+ldd: /sbin/liquid: Not a valid dynamic program
+ ---> 9325538e3d02
+Removing intermediate container 42b1d4cb5eb7
+Step 15/17 : RUN du -hs /sbin/liquid
+ ---> Running in 053a194f4265
+77.8M	/sbin/liquid
+ ---> abbc235463ad
+Removing intermediate container 053a194f4265
+Step 16/17 : RUN ldd /sbin/target || true
+ ---> Running in f6011812a33a
+ldd: /sbin/target: Not a valid dynamic program
+ ---> 5a74c7721c20
+Removing intermediate container f6011812a33a
+Step 17/17 : RUN du -hs /sbin/target
+ ---> Running in b2a19406aef6
+63.3M	/sbin/target
+ ---> a166d538cf1b
+Removing intermediate container b2a19406aef6
+Successfully built a166d538cf1b
+Successfully tagged waddlaw/liquidhaskell:latest
+```
+
+## UPX
+
+- [UPX](https://upx.github.io/)
+- [UPX on github](https://github.com/upx/upx)
+- [docker-upx](https://github.com/lalyos/docker-upx)
+
+```docker
+FROM alpine AS build-lh
+# INSTALL BASIC DEV TOOLS, GHC, GMP & ZLIB
+RUN apk update
+RUN apk add alpine-sdk git ca-certificates ghc gmp-dev zlib-dev
+# GRAB A RECENT BINARY OF STACK
+RUN curl -sSL https://get.haskellstack.org/ | sh
+# FIX https://bugs.launchpad.net/ubuntu/+source/gcc-4.4/+bug/640734
+WORKDIR /usr/lib/gcc/x86_64-alpine-linux-musl/6.3.0/
+RUN cp crtbeginT.o crtbeginT.o.orig
+RUN cp crtbeginS.o crtbeginT.o
+# COMPILE
+RUN git clone --recursive https://github.com/ucsd-progsys/liquidhaskell.git
+WORKDIR liquidhaskell
+RUN git checkout master
+RUN stack --local-bin-path /sbin install --system-ghc --ghc-options '-optl-static -fPIC -optc-Os' --split-objs
+# SHOW INFORMATION
+RUN ldd /sbin/fixpoint || true
+RUN du -hs /sbin/fixpoint
+RUN ldd /sbin/liquid || true
+RUN du -hs /sbin/liquid
+RUN ldd /sbin/target || true
+RUN du -hs /sbin/target
 ```
 
 ### ログ
@@ -227,3 +318,4 @@ Step 17/17 : RUN du -hs /sbin/target
 - [STATIC COMPILATION WITH STACK](https://www.fpcomplete.com/blog/2016/10/static-compilation-with-stack)
 - [stackとdockerでHaskellプログラムを静的リンクする](https://www.ishiy.xyz/posts/2016-02-28-haskell-docker.html)
 - [Package Details: stack-static 1.5.1-1](https://aur.archlinux.org/packages/stack-static/)
+- [build-static.sh](https://github.com/fpco/stack-docker-image-build/blob/master/build-static.sh)
