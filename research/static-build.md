@@ -1,7 +1,7 @@
 # バイナリ (静的リンク) の作り方
 
 - alpine (buxybox)で動かしたい
-- LiquidHaskell で実験
+- [LiquidHaskell](https://github.com/ucsd-progsys/liquidhaskell/tree/master) で実験
 
 ## バイナリ (動的リンク) の作り方
 
@@ -24,7 +24,7 @@ RUN ldd /sbin/target || true
 RUN du -hs /sbin/target
 ```
 
-ログ
+### ログ
 
 ```
 Step 9/14 : RUN ldd /sbin/fixpoint || true
