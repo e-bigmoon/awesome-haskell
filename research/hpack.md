@@ -26,13 +26,13 @@ source-repository head
 
 ## インストール
 
-### stack でインストール
+### stack
 
 ```bash
 $ stack install hpack-convert
 ```
 
-### ソースコードからインストール
+### ソースコード
 
 ```bash
 $ git clone https://github.com/yamadapc/hpack-convert
