@@ -45,4 +45,4 @@ $ stack install
 ```bash
 $ cd <project_dir>
 $ hpack-convert
-``
+```
