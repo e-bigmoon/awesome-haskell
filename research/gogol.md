@@ -7,6 +7,7 @@ Haskell で Google サービスの API を操作するためのライブラリ
 ## datastore
 
 - [gogol-datastore on stackage](https://www.stackage.org/package/gogol-datastore)
+- [Google Cloud Datastore API](https://cloud.google.com/datastore/reference/rest/?hl=ja)
 
 ### example
 
