@@ -3,6 +3,7 @@
 Haskell で Google サービスの API を操作するためのライブラリ
 
 - [brendanhay/gogol](https://github.com/brendanhay/gogol)
+- [gogol on stackage](https://www.stackage.org/package/gogol)
 
 ## datastore
 
