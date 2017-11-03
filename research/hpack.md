@@ -17,6 +17,32 @@ source-repository head
   location: https://github.com/user/repo
 ```
 
-# 既存プロジェクトから package.yaml を生成する
+# hpack-convert
 
-- [hpack-convert](https://github.com/yamadapc/hpack-convert#readme)
+既存プロジェクトの `.cabal` ファイルから `package.yaml` を生成するためのツール。
+
+- [hpack-convert on github](https://github.com/yamadapc/hpack-convert#readme)
+- [hpack-convert on stackage](https://www.stackage.org/package/hpack-convert)
+
+## インストール
+
+### stack でインストール
+
+```bash
+$ stack install hpack-convert
+```
+
+### ソースコードからインストール
+
+```bash
+$ git clone https://github.com/yamadapc/hpack-convert
+$ cd hpack-convert
+$ stack install
+```
+
+## 使い方
+
+```bash
+$ cd <project_dir>
+$ hpack-convert
+``
