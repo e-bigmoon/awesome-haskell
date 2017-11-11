@@ -66,3 +66,20 @@ map (\curr -> (+1) curr)
 
 ### ステップD スコープの移動
 ルールの LHS (等式の左部分) のスコープのマッチと同じように、マッチの後、`HLint` は RHS で必要な値の再修飾を行います。例えば `Data.Vector.null` が生成されたとき、`import qualified Data.Vector as V` ということを知っていれば、`V.null` を提案します。
+
+### 全体のコード
+全体のコードと関連する部分の定義を知りたいのなら、[the HLint source](https://github.com/ndmitchell/hlint/blob/f4466eed8a8bf6beccfd11052f2e3cfb074f2b44/src/Hint/Match.hs#L100-L114) を見てみてください。`matchIdea` を定義している部分です。ここでは簡単にしたバージョンを示します。スコープの情報とルール (LHS と RHS の)、そして部分式が与えられ、必要に応じて置換後に生成される式を返しているのがわかります。
+
+```haskell
+matchIdea :: Scope -> HintRule -> Exp_ -> Maybe Exp_
+matchIdea s HintRule{..} original = do
+    u <- unifyExp hintRuleLHS original
+    u <- validSubst u
+    -- need to check free vars before unqualification, but after subst (with e)
+    -- need to unqualify before substitution (with res)
+    let result = substitute u hintRuleRHS
+    guard $ (freeVars result Set.\\ Set.filter (not . isUnifyVar) (freeVars hintRuleRHS))
+            `Set.isSubsetOf` freeVars original
+        -- check no unexpected new free variables
+    return result
+```
