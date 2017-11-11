@@ -63,3 +63,6 @@ map (\curr -> (+1) curr)
 
 ### ステップC スコープのマッチ
 修飾名付き関数の単一化を行うとき、HLint はマッチするかどうか調べるために、修飾名の単一化も行います。`import qualified Data.Vector as V` という式があったとき、部分式 `V.length` は `Data.Vector.length` に単一化されます。HLint は完全なインポートの情報を持ち合わせていないので、マッチを推測するためにヒューリスティック的な手法を使います。
+
+### ステップD スコープの移動
+ルールの LHS (等式の左部分) のスコープのマッチと同じように、マッチの後、`HLint` は RHS で必要な値の再修飾を行います。例えば `Data.Vector.null` が生成されたとき、`import qualified Data.Vector as V` ということを知っていれば、`V.null` を提案します。
