@@ -10,7 +10,7 @@ Can be rewritten as:
 
 `map (\curr -> (+1) curr)`
 
-Which is much more readable (and then subsequently HLint will suggest `map (+1)`, which is vastly clearer than the initial foldr). The change required to HLint was to add a rule to the [hlint.yaml](https://github.com/ndmitchell/hlint/blob/master/data/hlint.yaml) saying:
+Which is much more readable (and then subsequently HLint will suggest `map (+1)`, which is vastly clearer than the initial `foldr`). The change required to HLint was to add a rule to the [hlint.yaml](https://github.com/ndmitchell/hlint/blob/master/data/hlint.yaml) saying:
 
 - `warn: {lhs: "foldr (\\c a -> x : a) []", rhs: "map (\\c -> x)"}`
 
