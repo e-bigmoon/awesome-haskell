@@ -29,7 +29,7 @@ An example of a subexpression that would have failed unification is `foldl (\cur
 
 ## Step 2: Validity
 
-The next step is to check that any value which has been bound more than once is equal in all bindings. In our case only a has been used twice, and it always binds to `acc`, so the unification is valid.
+The next step is to check that any value which has been bound more than once is equal in all bindings. In our case only `a` has been used twice, and it always binds to `acc`, so the unification is valid.
 
 An example of a subexpression that would have failed validity is `foldr (\curr acc -> (+1) curr : xs) []`.
 
