@@ -2,7 +2,7 @@
 
 *Summary: I added a degenerate foldr to map rule in the new version of HLint, here I describe how it works.*
 
-I've just released [HLint 2.0.10](https://hackage.haskell.org/package/hlint-2.0.10), which includes a rule to recognise uses of `foldr` that should really be map. As an example:
+I've just released [HLint 2.0.10](https://hackage.haskell.org/package/hlint-2.0.10), which includes a rule to recognise uses of `foldr` that should really be `map`. As an example:
 
 `foldr (\curr acc -> (+1) curr : acc) []`
 
