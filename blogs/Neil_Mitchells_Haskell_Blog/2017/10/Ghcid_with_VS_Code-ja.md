@@ -1,7 +1,7 @@
 # VS Code で Ghcid を使う
 *概要: 新しいバージョンの Ghcid と VS Code拡張がリリースされ、よりいい感じに動くようになった。*
 
-[Ghcid v0.6.8](https://hackage.haskell.org/package/ghcid) と関連する VS Code拡張[haskell-ghcid v0.2.0](https://marketplace.visualstudio.com/items?itemName=ndmitchell.haskell-ghcid) をリリースしました。
+[Ghcid v0.6.8](https://hackage.haskell.org/package/ghcid) と関連する VS Code拡張 [haskell-ghcid v0.2.0](https://marketplace.visualstudio.com/items?itemName=ndmitchell.haskell-ghcid) をリリースしました。
 一緒に使うと、Ghcid + VS Code 環境をシンプルなものにしてくれます。
 
 ## .ghcid ファイルの読み込み (Ghcid)
