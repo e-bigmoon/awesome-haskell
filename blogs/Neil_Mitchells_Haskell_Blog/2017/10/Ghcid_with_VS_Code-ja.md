@@ -7,7 +7,7 @@
 
 ## .ghcid ファイルの読み込み (Ghcid)
 Ghcid に、カレントディレクトリに `.ghcid` ファイルがあった場合はそれを追加の引数としてロードする機能が追加されました。
-例えば、Shake レポジトリには `.ghcid` ファイルがあって:
+例えば、Shake レポジトリには [.ghcid](https://github.com/ndmitchell/shake/blob/master/.ghcid) ファイルがあって:
 
 ```
 -c "ghci -fno-code -ferror-spans"
