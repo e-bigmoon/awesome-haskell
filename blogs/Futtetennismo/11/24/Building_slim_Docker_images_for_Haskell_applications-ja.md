@@ -50,4 +50,7 @@ ENTRYPOINT ["/bin/serverless-validator"]
 
 > strip removes or modifies the symbol table attached to the output of the assembler and link editor. This is useful to save space after a program has been debugged and to limit dynamically bound symbols.
 
-そして最後に、ベースコンテナから実行可能コンテナに、実行可能ファイルをコピーします。[fpco/haskell-scratch](https://hub.docker.com/r/fpco/haskell-scratch/) という Dockerイメージは、私の個人的なヒーロー、[Michael Snoyberg](https://twitter.com/snoyberg)さんが作ったもので、[このブログ記事](https://www.fpcomplete.com/blog/2015/05/haskell-web-server-in-5mb)でしばらく前に紹介されています。これは最小の
+そして最後に、ベースコンテナから実行可能コンテナに、実行可能ファイルをコピーします。[fpco/haskell-scratch](https://hub.docker.com/r/fpco/haskell-scratch/) という Dockerイメージは、私の個人的なヒーロー、[Michael Snoyberg](https://twitter.com/snoyberg)さんが作ったもので、[このブログ記事](https://www.fpcomplete.com/blog/2015/05/haskell-web-server-in-5mb)でしばらく前に紹介されています。これは最小の Linuxイメージで (2MB 程度の)、
+Haskell のアプリケーションを動かすベースイメージとして使うことができます。2年間更新されていませんが、今でも完璧に動きます ([snoyberg/haskell-scratch](https://hub.docker.com/r/snoyberg/haskell-scratch/) というタグがついたまた別の Dockerイメージがありますが、これは非推奨だと思います。)。
+
+もう一度マイケルと FP Complete の人たちに、Haskellerたちが日々のコーディングで遭遇する、現実的な多くの問題を解決してくれることを感謝したいと思います!
