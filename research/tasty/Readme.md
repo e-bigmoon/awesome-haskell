@@ -38,6 +38,10 @@ Ingredient | 内容 | 調査結果
 - ソケット、一時ファイルなどの確保・解放を各テストで共有できます。
 - 拡張性があります。add your own test providers and ingredients (runners) above and beyond those provided
 
+## その他
+
+- [lwm/tasty-discover](https://github.com/lwm/tasty-discover)
+
 ## Example
 ### コード
 ```haskell
