@@ -1,7 +1,10 @@
 resolver: lts-10.4
 packages:
 - .
-extra-deps: []
+extra-deps:
+- hakyll-4.11.0.0
+- pandoc-citeproc-0.13.0.1
+- pandoc-2.1.1
 flags: {}
 extra-package-dbs: []
 
