@@ -7,8 +7,8 @@ copyright: 2017 BIG MOON
 github: e-bigmoon/awesome-haskell
 
 ghc-options:
-  - -Wall
-  - -Wno-type-defaults
+- -Wall
+- -Wno-type-defaults
 
 dependencies:
   - base >= 4.7 && < 5
@@ -16,17 +16,21 @@ dependencies:
 executables:
   site:
     main: site.hs
+    ghc-options:
+    - -threaded
     dependencies:
-      - hakyll
-      - awesome-haskell
+    - hakyll
+    - awesome-haskell
 
 library:
   source-dirs: src
+  ghc-options:
+    - -threaded
   exposed-modules:
-    - Site.Type
-    - Site.Class
-    - Site.Util
+  - Site.Type
+  - Site.Class
+  - Site.Util
   dependencies:
-    - text
-    - yaml
-    - hakyll
+  - text
+  - yaml
+  - hakyll
